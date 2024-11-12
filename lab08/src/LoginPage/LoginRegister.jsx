@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const LoginRegister = () => {
-
+//comment
   const navigate = useNavigate(); // For navigation after login
 
 
