@@ -1,0 +1,44 @@
+* {
+    background-color: rgb(159, 203, 225);
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Add space between form elements */
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between label and input */
+}
+
+.signInButton {
+    font-size: 20px;
+    width: 400px;
+    height: 40px;
+    border-radius: 10px;
+    margin-top: 20px;
+    text-align: center;
+    background-color: rgb(21, 129, 224);
+}
+
+.textInput, .passwordInput {
+    width: 300px;
+    height: 40px;
+    padding-left: 10px;
+}
+
+.label {
+    font-size: 20px;
+}
