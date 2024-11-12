@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const LoginRegister = () => {
+  const navigate = useNavigate(); // For navigation after login
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -31,6 +32,9 @@ const LoginRegister = () => {
     }
   };
 
+  
+
+
   return (
     <div className="login">
       <h1>Login/Register</h1>
@@ -57,6 +61,42 @@ const LoginRegister = () => {
         <button className="signInButton" type="submit">Sign In</button>
       </form>
       {message && <p>{message}</p>}
+      
+      <div
+          className="button-container"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "10px",
+            marginTop: "20px",
+          }}
+        >
+          <button
+            variant="contained"
+            className="circle-button"
+            onClick={() => navigate("/student-home")}
+            style={{ borderRadius: "50%", padding: "20px 30px" }}
+          >
+            Student
+          </button>
+          <button
+            variant="contained"
+            className="circle-button"
+            onClick={() => navigate("/teacher-home")}
+            style={{ borderRadius: "50%", padding: "20px 30px" }}
+          >
+            Teacher
+          </button>
+          <button
+            variant="contained"
+            className="circle-button"
+            onClick={() => navigate("/admin-home")}
+            style={{ borderRadius: "50%", padding: "20px 30px" }}
+          >
+            Admin
+          </button>
+      </div>
+
     </div>
     
   );
