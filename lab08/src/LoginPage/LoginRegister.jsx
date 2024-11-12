@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './LoginRegister.css';
+import { useNavigate } from "react-router-dom";
+
 
 const LoginRegister = () => {
   const [username, setUsername] = useState('');
@@ -56,6 +58,7 @@ const LoginRegister = () => {
       </form>
       {message && <p>{message}</p>}
     </div>
+    
   );
 }
 
