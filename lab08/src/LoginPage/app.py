@@ -18,7 +18,7 @@ class Teacher(db.Model):
     name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
     password = db.Column(db.String(100), nullable=False)  # Password, not unique
     # EDIT THIS
-class Cources(db.Model):
+class Courses(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
     name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
     password = db.Column(db.String(100), nullable=False)  # Password, not unique
