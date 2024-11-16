@@ -6,6 +6,7 @@ import StudentHome from './student_pages/StudentHome';
 import TeacherHome from './teacher_pages/TeacherHome';
 import AdminHome from './admin_pages/AdminHome';
 import AddCourse from './student_pages/addCourse'; // Ensure the name matches your file
+import TeacherCourseView from './teacher_pages/TeacherCourseView'; // Ensure the name matches your file
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/teacher-home" element={<TeacherHome />} />
           <Route path="/admin-home" element={<AdminHome />} />
           <Route path="/add-course" element={<AddCourse />} /> {/* Use a unique route */}
+          <Route path="/teacher-course-view" element={<TeacherCourseView />} />
         </Routes>
       </div>
     </Router>
