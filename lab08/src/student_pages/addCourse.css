@@ -1,5 +1,5 @@
 /* Center everything on the page */
-body {
+.outeraddCourseHome body {
     margin: 0;
     display: flex;
     align-items: center;
@@ -8,7 +8,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.outerStudentHome {
+.outeraddCourseHome {
     width: 1000px; /* Increased width for a bigger box */
     height: 600px; /* Increased height for a bigger box */
     max-height: 800px;
@@ -22,7 +22,7 @@ body {
     position: relative; /* Allows positioning within this container */
 }
 
-.outerStudentHome .outerHeader {
+.outeraddCourseHome .outerHeader {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -34,30 +34,31 @@ body {
     top: 0; /* Sticks to the top of the parent container */
     z-index: 10; /* Ensures it appears above other content */
 }
-.outerStudentHome .outerHeader .left {
+.outeraddCourseHome .outerHeader .left {
     background-color: lightblue; /* Matches the container's background */
 }
-.outerStudentHome .outerHeader .center {
+.outeraddCourseHome .outerHeader .center {
     background-color: lightblue; /* Matches the container's background */
 }
-
-
-.outerStudentHome .outerHeader .left,
-.outerStudentHome .outerHeader .center,
-.outerStudentHome .outerHeader .right {
+.outeraddCourseHome .outerHeader .left,
+.outeraddCourseHome .outerHeader .center,
+.outeraddCourseHome .outerHeader .right {
     flex: 1;
     text-align: center;
 }
 
-.outerStudentHome .outerHeader .left {
+.outeraddCourseHome .outerHeader .left {
     text-align: left;
 }
 
-.outerStudentHome .outerHeader .right {
+.outeraddCourseHome .outerHeader .right {
     text-align: right;
 }
 
-.outerStudentHome button {
+/* Other styles remain unchanged */
+
+
+.outeraddCourseHome button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -70,7 +71,8 @@ body {
     color: white;
     transition: background-color 0.3s ease;
 }
-.outerStudentHome .lefts {
+
+.outeraddCourseHome .rights {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -83,15 +85,14 @@ body {
     color: white;
     transition: background-color 0.3s ease;
 }
-
-.outerStudentHome button:hover {
+.outeraddCourseHome button:hover {
     background-color: #0056b3;
 }
-.outerStudentHome .lefts:hover {
+.outeraddCourseHome .rights:hover {
     background-color: gray;
 }
 
-.outerStudentHome .innerTeacherHome {
+.outeraddCourseHome .innerTeacherHome {
     width: 100%;
     background-color: darkblue;
     color: white;
@@ -99,7 +100,7 @@ body {
     border-radius: 5px;
 }
 
-.outerStudentHome .innerHeader {
+.outeraddCourseHome .innerHeader {
     text-align: center;
     margin-bottom: 20px;
     font-size: 24px;
@@ -107,20 +108,20 @@ body {
     padding-bottom: 10px;
 }
 
-.outerStudentHome .courses {
+.outeraddCourseHome .courses {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
 }
 
-.outerStudentHome .courses th,
-.outerStudentHome .courses td {
+.outeraddCourseHome .courses th,
+.outeraddCourseHome .courses td {
     border: 1px solid #000000;
     padding: 10px;
     text-align: left;
 }
 
-.outerStudentHome .courses th {
+.outeraddCourseHome .courses th {
     background-color: #7fadbc;
     text-align: center;
 }

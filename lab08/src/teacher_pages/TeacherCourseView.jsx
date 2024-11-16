@@ -1,36 +1,33 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './TeacherHome.css';
+import './TeacherCourseView.css';
 
-
-const TeacherHome = () => {
+const TeacherCourseView = () => {
     const [name, setName] = React.useState('Teacher Home');
+    const [courseName, setCourseName] = React.useState('');
     const navigate = useNavigate();
 
     return(
-        <div className="outerTeacherHome">
+        <div className="outerTeacherCourseView">
             <div className="outerHeader">
                 <span className="left">Welcome {name}</span>
                 <span className="center">ACME University</span>
                 <button className="right" onClick={() => alert('Signing out...')}>Sign out</button>
             </div>
-            <div className="innerTeacherHome">
-                <h2 className="innerHeader">Your Courses</h2>
-                <table className="courses">
+            <div className="innerTeacherCourseView">
+                <span className="innerHeader" style={{ fontSize: '1.5em', fontWeight: 'bold' }}>{courseName}</span>
+                <table className="students">
                     <thead>
                         <tr>
-                            <th>Course Name</th>
-                            <th>Teacher</th>
-                            <th>Time</th>
-                            <th>Students Enrolled</th>
+                            <th>Student Name</th>
+                            <th>Grade</th>
                         </tr>
                     </thead>
                 </table>
-                <button onClick={() => navigate('/teacher-course-view')}>Go to Teacher Course View</button>
+                <button onClick={() => navigate('/teacher-home')}>Go to Teacher Home</button>
             </div>
         </div>
     )
-
 }
 
-export default TeacherHome
+export default TeacherCourseView
