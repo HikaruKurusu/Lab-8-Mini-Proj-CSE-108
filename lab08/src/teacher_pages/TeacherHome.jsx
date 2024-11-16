@@ -9,7 +9,7 @@ const TeacherHome = () => {
             <div className="outerHeader">
                 <span className="left">Welcome {name}</span>
                 <span className="center">ACME University</span>
-                <span className="right">Sign out</span>
+                <button className="right" onClick={() => alert('Signing out...')}>Sign out</button>
             </div>
             <div className="innerTeacherHome">
                 <h2 className="innerHeader">Your Courses</h2>
