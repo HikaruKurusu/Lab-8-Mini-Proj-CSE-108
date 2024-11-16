@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, redirect, url_for
+from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
@@ -34,12 +34,12 @@ class Courses(db.Model):
     time = db.Column(db.String(20))
     seats = db.Column(db.Integer)
 
-class instructorTeaches(db.model):
-    instructorID = (db.Integer)
+class instructorTeaches(db.Model):
+    instructorID = db.Column(db.Integer, primary_key=True)
     courseID = db.column(db.Integer)
 
 class studentTakes(db.Model):
-    studentID = db.Column(db.Integer)
+    studentID = db.Column(db.Integer, primary_key=True)
     courseID = db.column(db.Integer)
 
 
@@ -54,8 +54,6 @@ def login():
     username = data.get('username')
     password = data.get('password')
     type = data.get('userType')
-    if type == 'teacher':
-        return redirect(url_for())
     if not username or not password:
         return jsonify({"error": "Username and password are required"}), 400
     
@@ -63,9 +61,17 @@ def login():
     user = userInfo.query.filter_by(name=username, password=password).first()
     if user:
         return jsonify({"message": "Login successful"}), 200
+        if type == "teacher":
+            return send_from_directory('static', "TeacherHome.jsx")
+        # if type =='student':
+        #     return redirect("")
+        # if type =="admin":
+        #     return redirect("")
     else:
         return jsonify({"error": "Invalid username or password"}), 401
 
-@app.route('/login')
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+

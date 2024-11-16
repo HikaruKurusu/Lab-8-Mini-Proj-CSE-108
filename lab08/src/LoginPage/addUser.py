@@ -1,7 +1,7 @@
 from app import db, userInfo , app   # Import the app, db, and Student model from your main app file
 
 # Create a new Student instance
-new_user = userInfo(name="Jason", password="123", userType="Admin")
+new_user = userInfo(name="James", password="123", userType="teacher")
 
 # Use app context to interact with the database
 with app.app_context():
