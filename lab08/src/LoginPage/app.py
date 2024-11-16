@@ -32,6 +32,22 @@ with app.app_context():
     db.create_all()
 
 # Login route
+# @app.route('/login', methods=['POST'])
+# def login():
+#     data = request.get_json()
+#     username = data.get('username')
+#     password = data.get('password')
+    
+#     if not username or not password:
+#         return jsonify({"error": "Username and password are required"}), 400
+    
+#     # Check if user exists and password matches
+#     user = UserInfo.query.filter_by(name=username, password=password).first()
+#     if user:
+#         return jsonify({"message": "Login successful"}), 200
+#     else:
+#         return jsonify({"error": "Invalid username or password"}), 401
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -44,9 +60,11 @@ def login():
     # Check if user exists and password matches
     user = UserInfo.query.filter_by(name=username, password=password).first()
     if user:
-        return jsonify({"message": "Login successful"}), 200
+        # Return the user type along with the success message
+        return jsonify({"message": "Login successful", "userType": user.userType}), 200
     else:
         return jsonify({"error": "Invalid username or password"}), 401
+
 
 if __name__ == '__main__':
     app.run(debug=True)
