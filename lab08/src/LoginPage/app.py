@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
@@ -9,23 +9,39 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Define the Student model
-class Student(db.Model):
+class userInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
     name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
     password = db.Column(db.String(100), nullable=False)  # Password, not unique
-class Teacher(db.Model):
+    userType = db.Column(db.String(100), nullable=False) # Check user type
+# class Student(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
+#     name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
+#     password = db.Column(db.String(100), nullable=False)  # Password, not unique
+# class Teacher(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
+#     name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
+#     password = db.Column(db.String(100), nullable=False)  # Password, not unique
+#     # EDIT THIS
+# class Admin(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
+#     name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
+#     password = db.Column(db.String(100), nullable=False)  # Password, not unique
+
+class Courses(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
     name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
-    password = db.Column(db.String(100), nullable=False)  # Password, not unique
-    # EDIT THIS
-class Cources(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
-    name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
-    password = db.Column(db.String(100), nullable=False)  # Password, not unique
-class UserInfo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
-    name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
-    password = db.Column(db.String(100), nullable=False)  # Password, not unique
+    time = db.Column(db.String(20))
+    seats = db.Column(db.Integer)
+
+class instructorTeaches(db.model):
+    instructorID = (db.Integer)
+    courseID = db.column(db.Integer)
+
+class studentTakes(db.Model):
+    studentID = db.Column(db.Integer)
+    courseID = db.column(db.Integer)
+
 
 # Initialize the database
 with app.app_context():
@@ -37,16 +53,19 @@ def login():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    
+    type = data.get('userType')
+    if type == 'teacher':
+        return redirect(url_for())
     if not username or not password:
         return jsonify({"error": "Username and password are required"}), 400
     
     # Check if user exists and password matches
-    user = Student.query.filter_by(name=username, password=password).first()
+    user = userInfo.query.filter_by(name=username, password=password).first()
     if user:
         return jsonify({"message": "Login successful"}), 200
     else:
         return jsonify({"error": "Invalid username or password"}), 401
 
+@app.route('/login')
 if __name__ == '__main__':
     app.run(debug=True)
