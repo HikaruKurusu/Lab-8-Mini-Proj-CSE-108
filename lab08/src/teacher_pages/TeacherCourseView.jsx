@@ -6,13 +6,18 @@ const TeacherCourseView = () => {
     const [name, setName] = React.useState('Teacher Home');
     const [courseName, setCourseName] = React.useState('');
     const navigate = useNavigate();
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate("/");
+      };
+    
 
     return(
         <div className="outerTeacherCourseView">
             <div className="outerHeader">
                 <span className="left">Welcome {name}</span>
                 <span className="center">ACME University</span>
-                <button className="right" onClick={() => alert('Signing out...')}>Sign out</button>
+                <button className="right" onClick={handleLogout}>Sign out</button>
             </div>
             <div className="innerTeacherCourseView">
                 <span className="innerHeader" style={{ fontSize: '1.5em', fontWeight: 'bold' }}>{courseName}</span>
