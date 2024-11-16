@@ -1,0 +1,99 @@
+/* Center everything on the page */
+body {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.outerStudentHome {
+    width: 90%;
+    max-width: 800px;
+    background-color: lightblue;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.outerStudentHome .outerHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.outerStudentHome .outerHeader .left,
+.outerStudentHome .outerHeader .center,
+.outerStudentHome .outerHeader .right {
+    flex: 1;
+    text-align: center;
+}
+
+.outerStudentHome .outerHeader .left {
+    text-align: left;
+}
+
+.outerStudentHome .outerHeader .right {
+    text-align: right;
+}
+
+.outerStudentHome button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.outerStudentHome button:hover {
+    background-color: #0056b3;
+}
+
+.outerStudentHome .innerTeacherHome {
+    width: 100%;
+    background-color: darkblue;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.outerStudentHome .innerHeader {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    border-bottom: 2px solid white;
+    padding-bottom: 10px;
+}
+
+.outerStudentHome .courses {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.outerStudentHome .courses th,
+.outerStudentHome .courses td {
+    border: 1px solid #000000;
+    padding: 10px;
+    text-align: left;
+}
+
+.outerStudentHome .courses th {
+    background-color: #7fadbc;
+    text-align: center;
+}
