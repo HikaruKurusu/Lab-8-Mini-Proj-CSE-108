@@ -6,13 +6,17 @@ import './TeacherHome.css';
 const TeacherHome = () => {
     const [name, setName] = React.useState('Teacher Home');
     const navigate = useNavigate();
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/');
+      };
 
     return(
         <div className="outerTeacherHome">
             <div className="outerHeader">
                 <span className="left">Welcome {name}</span>
                 <span className="center">ACME University</span>
-                <button className="right" onClick={() => alert('Signing out...')}>Sign out</button>
+                <button className="right" onClick={handleLogout}>Sign out</button>
             </div>
             <div className="innerTeacherHome">
                 <h2 className="innerHeader">Your Courses</h2>
