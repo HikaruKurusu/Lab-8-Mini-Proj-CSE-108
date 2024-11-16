@@ -5,6 +5,10 @@ import './addCourse.css';
 function AddCourse() {
   const [name, setName] = useState('Student');
   const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
 
   const handleButtonClick = (buttonName) => {
     if (buttonName === 'addCourses') {
@@ -21,7 +25,7 @@ function AddCourse() {
       <div className="outerHeader">
         <span className="left">Welcome {name}</span>
         <span className="center">ACME University</span>
-        <button className="right" onClick={() => handleButtonClick('signOut')}>
+        <button className="right" onClick={handleLogout}>
           Sign out
         </button>
       </div>

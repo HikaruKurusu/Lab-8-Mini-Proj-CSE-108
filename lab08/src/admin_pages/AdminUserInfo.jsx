@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "./AdminHome.css";
+import "./AdminUserInfo.css";
 import { useNavigate } from "react-router-dom";
 
-function AdminHome() {
+function AdminUserInfo() {
   const [name, setName] = useState("Admin");
   const navigate = useNavigate();
 
@@ -62,4 +62,4 @@ function AdminHome() {
   );
 }
 
-export default AdminHome;
+export default AdminUserInfo;
