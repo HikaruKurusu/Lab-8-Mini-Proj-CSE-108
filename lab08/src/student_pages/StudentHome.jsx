@@ -27,7 +27,7 @@ function StudentHome() {
             </div>
             <div className="Header">
                 <button
-                    className="left"
+                    className="lefts"
                     onClick={() => handleButtonClick('yourCourses')}
                 >
                     Your Courses
