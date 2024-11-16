@@ -16,8 +16,6 @@ function StudentHome() {
             navigate('/add-course');
         } else if (buttonName === 'yourCourses') {
             navigate('/student-home');
-        } else if (buttonName === 'signOut') {
-            alert('Signing out...');
         }
     };
 
