@@ -11,16 +11,14 @@ db = SQLAlchemy(app)
 class Courses(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
     name = db.Column(db.String(20))
+    instructorName = db.Column(db.String(20))
     maxEnrolled = db.Column(db.Integer, nullable=True)
-
+    timeslot = db.Column(db.String(20))
 class UserInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
     name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
     password = db.Column(db.String(100), nullable=False)  # Password, not unique
     userType = db.Column(db.String(20), nullable=False)
-class instructorTeaches(db.Model):
-    instructorID = db.Column(db.Integer, primary_key = True)
-    courseID = db.Column(db.Integer)
 class studentEnrolledin(db.Model):
     studentID = db.Column(db.Integer, primary_key=True)
     courseID = db.Column(db.Integer)
@@ -64,6 +62,41 @@ def login():
         return jsonify({"message": "Login successful", "userType": user.userType}), 200
     else:
         return jsonify({"error": "Invalid username or password"}), 401
+
+@app.route('/api/courses', methods=['GET'])
+def get_courses():
+    courses = Courses.query.all()  # Fetch all courses
+    courses_list = [
+        {
+            "id": course.id,
+            "name": course.name,
+            "instructorName": course.instructorName,
+            "maxEnrolled": course.maxEnrolled,
+            "timeslot": course.timeslot
+        } for course in courses
+    ]
+    return jsonify(courses_list), 200
+
+@app.route('/api/student-courses/<int:student_id>', methods=['GET'])
+def get_student_courses(student_id):
+    # Get all courses the student is enrolled in
+    enrolled_courses = (
+        db.session.query(Courses)
+        .join(studentEnrolledin, studentEnrolledin.courseID == Courses.id)
+        .filter(studentEnrolledin.studentID == student_id)
+        .all()
+    )
+    courses_list = [
+        {
+            "id": course.id,
+            "name": course.name,
+            "instructorName": course.instructorName,
+            "maxEnrolled": course.maxEnrolled,
+            "timeslot": course.timeslot
+        } for course in enrolled_courses
+    ]
+    return jsonify(courses_list), 200
+
 
 
 if __name__ == '__main__':
