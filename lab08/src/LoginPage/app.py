@@ -8,24 +8,24 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///login.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Define the Student model
-class Student(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
-    name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
-    password = db.Column(db.String(100), nullable=False)  # Password, not unique
-class Teacher(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
-    name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
-    password = db.Column(db.String(100), nullable=False)  # Password, not unique
-    # EDIT THIS
 class Courses(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
-    name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
-    password = db.Column(db.String(100), nullable=False)  # Password, not unique
+    name = db.Column(db.String(20))
+    maxEnrolled = db.Column(db.Integer, nullable=True)
+
 class UserInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
     name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
     password = db.Column(db.String(100), nullable=False)  # Password, not unique
+    userType = db.Column(db.String(20), nullable=False)
+class instructorTeaches(db.Model):
+    instructorID = db.Column(db.Integer, primary_key = True)
+    courseID = db.Column(db.Integer)
+class studentEnrolledin(db.Model):
+    studentID = db.Column(db.Integer, primary_key=True)
+    courseID = db.Column(db.Integer)
+
+
 
 # Initialize the database
 with app.app_context():
@@ -42,7 +42,7 @@ def login():
         return jsonify({"error": "Username and password are required"}), 400
     
     # Check if user exists and password matches
-    user = Student.query.filter_by(name=username, password=password).first()
+    user = UserInfo.query.filter_by(name=username, password=password).first()
     if user:
         return jsonify({"message": "Login successful"}), 200
     else:
