@@ -8,7 +8,7 @@ function AddCourse() {
 
   const handleButtonClick = (buttonName) => {
     if (buttonName === 'addCourses') {
-      alert('Already in add courses');
+      navigate('/add-course');
     } else if (buttonName === 'yourCourses') {
       navigate('/student-home');
     } else if (buttonName === 'signOut') {

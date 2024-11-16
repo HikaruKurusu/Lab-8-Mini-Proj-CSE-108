@@ -10,7 +10,7 @@ function StudentHome() {
         if (buttonName === 'addCourses') {
             navigate('/add-course');
         } else if (buttonName === 'yourCourses') {
-            alert('Your course');
+            navigate('/student-home');
         } else if (buttonName === 'signOut') {
             alert('Signing out...');
         }
