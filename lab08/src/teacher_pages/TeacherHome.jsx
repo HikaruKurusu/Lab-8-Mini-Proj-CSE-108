@@ -13,18 +13,32 @@ const TeacherCourseView = () => {
     };
 
     useEffect(() => {
-        // Fetch courses from the API
-        fetch('http://127.0.0.1:5000/api/courses') // Ensure URL is correct
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);  // Log data to verify response
-                setCourses(data);  // Update courses state with API response
-            })
-            .catch(error => {
-                console.error('Error fetching courses:', error);
-                setCourses([]);  // Optionally handle error by clearing courses
-            });
-    }, []);
+        const fetchCourses = async () => {
+          try {
+            const teacherId = localStorage.getItem('userId'); // Assume teacher ID is stored in localStorage
+            if (!teacherId) {
+              console.error('Teacher ID not found');
+              return;
+            }
+            const response = await fetch(`http://127.0.0.1:5000/get_teacher_courses/${teacherId}`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch courses');
+            }
+            const data = await response.json();
+    
+            // Check if the data structure is correct
+            if (Array.isArray(data)) {
+              setCourses(data); // Set the courses in state
+            } else {
+              console.error('Invalid courses data format:', data);
+            }
+          } catch (error) {
+            console.error('Error fetching courses:', error);
+          }
+        };
+    
+        fetchCourses();
+      }, []);
 
     return (
         <div className="outerTeacherCourseView">
@@ -46,6 +60,7 @@ const TeacherCourseView = () => {
                             <th>Instructor</th>
                             <th>Max Enrollment</th>
                             <th>Timeslot</th>
+                            <th>View Students</th>
                         </tr>
                     </thead>
                     <tbody>

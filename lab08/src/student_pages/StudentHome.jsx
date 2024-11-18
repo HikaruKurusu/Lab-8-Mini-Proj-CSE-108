@@ -11,7 +11,7 @@ function StudentHome() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const studentId = localStorage.getItem('studentId'); // Assume student ID is stored in localStorage
+        const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
         if (!studentId) {
           console.error('Student ID not found');
           return;

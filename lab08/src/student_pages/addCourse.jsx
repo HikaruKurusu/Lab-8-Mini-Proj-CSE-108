@@ -27,7 +27,7 @@ function AddCourse() {
 
   const handleAddCourse = async (courseId) => {
     try {
-      const studentId = localStorage.getItem('studentId'); // Assume student ID is stored in localStorage
+      const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
       if (!studentId) {
         alert('Student ID not found. Please log in again.');
         return;

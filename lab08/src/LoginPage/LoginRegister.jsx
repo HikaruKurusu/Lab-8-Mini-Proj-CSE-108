@@ -48,7 +48,7 @@ const LoginRegister = () => {
             setMessage(data.message);
 
             // Save userID to localStorage
-            localStorage.setItem('studentId', data.userID);
+            localStorage.setItem('userId', data.userID);
 
             // Redirect based on userType
             if (data.userType === "student") {

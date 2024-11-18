@@ -23,9 +23,10 @@ class studentEnrolledin(db.Model):
     enrollmentID = db.Column(db.Integer, primary_key=True)
     studentID = db.Column(db.String(10))
     courseID = db.Column(db.Integer)
+    grade = db.Column(db.Numeric(4,2), nullable=True)
 class instructorTeaches(db.Model):
     instructionID = db.Column(db.Integer, primary_key=True)
-    teacherID = db.Column(db.string(10))
+    teacherID = db.Column(db.String(10))
     courseID = db.Column(db.Integer)
 
 
@@ -71,6 +72,25 @@ def login():
 
 @app.route('/api/courses', methods=['GET'])
 def get_courses():
+    # try:
+    #     courses_taught = (
+    #         db.session.Query(Courses)
+    #         .join(instructorTeaches, Courses.courseID == instructorTeaches.courseID)
+    #         .filter(instructorTeaches.teacherID == instructorID)
+    #     )
+    #     courses_list = [
+    #         {
+    #             "name": course.name,
+    #             "instructorName": course.instructorName,
+    #             "maxEnrolled": course.maxEnrolled,
+    #             "timeslot": course.timeslot
+    #         }
+    #         for course in courses_taught
+    #     ]
+
+    #     return jsonify(courses_list), 200
+    # except Exception as e:
+    #     return jsonify({"error": str(e)}), 500
     courses = Courses.query.all()  # Fetch all courses
     courses_list = [
         {
@@ -108,6 +128,54 @@ def get_student_courses(student_id):
         return jsonify(courses_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/get_teacher_courses/<string:teacher_id>', methods=['GET'])
+def get_teacher_courses(teacher_id):
+    try:
+        # Query the database for courses the student is enrolled in
+        enrolled_courses = (
+            db.session.query(Courses)
+            .join(instructorTeaches, Courses.courseID == instructorTeaches.courseID)
+            .filter(instructorTeaches.teacherID == teacher_id)
+            .all()
+        )
+        
+        # Format the result into a list of dictionaries
+        courses_list = [
+            {
+                "id": course.courseID,
+                "name": course.name,
+                "instructorName": course.instructorName,
+                "maxEnrolled": course.maxEnrolled,
+                "timeslot": course.timeslot
+            }
+            for course in enrolled_courses
+        ]
+
+        return jsonify(courses_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/get_student_grades/courseID', methods=['GET'])
+def get_student_grades(course_id):
+    try:
+        student_grades = (
+            db.session.query(studentEnrolledin)
+            .join(UserInfo, UserInfo.userID == studentEnrolledin.studentID)
+            .filter(studentEnrolledin.courseID == course_id)
+            .all()
+        )
+        student_list = [
+            {
+                "name": student.name,
+                "grade": grade
+            }
+            for grade, student in student_grades
+        ]
+
+        return jsonify(student_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/enroll_student', methods=['POST'])
 def enroll_student():
@@ -119,6 +187,9 @@ def enroll_student():
         return jsonify({"error": "Student ID and Course ID are required"}), 400
 
     try:
+        existing_enrollment = studentEnrolledin.query.filter_by(studentID=student_id, courseID=course_id).first()
+        if existing_enrollment:
+            return jsonify({"error": "Student is already enrolled in this course"}), 400
         enrollment = studentEnrolledin(studentID=student_id, courseID=course_id)
         db.session.add(enrollment)
         db.session.commit()
