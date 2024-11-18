@@ -1,10 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './addCourse.css';
 
 function AddCourse() {
   const [name, setName] = useState('Student');
+  const [courses, setCourses] = useState([]); // State for storing all courses
   const navigate = useNavigate();
+
+  // Fetch all available courses from the API
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/api/courses'); // Adjust URL if necessary
+        if (!response.ok) {
+          throw new Error('Failed to fetch courses');
+        }
+        const data = await response.json();
+        setCourses(data);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  const handleAddCourse = async (courseId) => {
+    try {
+      const studentId = localStorage.getItem('studentId'); // Assume student ID is stored in localStorage
+      if (!studentId) {
+        alert('Student ID not found. Please log in again.');
+        return;
+      }
+
+      const response = await fetch(`http://127.0.0.1:5000/enroll_student`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ studentId, courseId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add course');
+      }
+
+      alert('Successfully enrolled in the course!');
+    } catch (error) {
+      console.error('Error adding course:', error);
+      alert('Could not enroll in the course. Please try again.');
+    }
+  };
 
   const handleButtonClick = (buttonName) => {
     if (buttonName === 'addCourses') {
@@ -12,7 +59,8 @@ function AddCourse() {
     } else if (buttonName === 'yourCourses') {
       navigate('/student-home');
     } else if (buttonName === 'signOut') {
-      alert('Signing out...');
+      localStorage.clear();
+      navigate('/');
     }
   };
 
@@ -40,7 +88,7 @@ function AddCourse() {
         </button>
       </div>
       <div className="innerTeacherHome">
-        <h2 className="innerHeader">Add Courses</h2>
+        <h2 className="innerHeader">Available Courses</h2>
         <table className="courses">
           <thead>
             <tr>
@@ -51,6 +99,24 @@ function AddCourse() {
               <th>Add Class</th>
             </tr>
           </thead>
+          <tbody>
+            {courses.map((course) => (
+              <tr key={course.id}>
+                <td>{course.name}</td>
+                <td>{course.instructorName}</td>
+                <td>{course.timeslot}</td>
+                <td>{course.maxEnrolled}</td>
+                <td>
+                  <button
+                    onClick={() => handleAddCourse(course.id)}
+                    className="add-button"
+                  >
+                    Enroll
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>

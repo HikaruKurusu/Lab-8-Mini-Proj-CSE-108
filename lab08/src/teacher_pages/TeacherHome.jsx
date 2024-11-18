@@ -6,18 +6,24 @@ const TeacherCourseView = () => {
     const [name, setName] = useState('Teacher Home');
     const [courses, setCourses] = useState([]); // State to store courses
     const navigate = useNavigate();
+
     const handleLogout = () => {
         localStorage.clear();
         navigate('/');
-      };
+    };
+
     useEffect(() => {
         // Fetch courses from the API
-        fetch('http://127.0.0.1:5000/api/courses') // Adjust URL if needed
+        fetch('http://127.0.0.1:5000/api/courses') // Ensure URL is correct
             .then(response => response.json())
             .then(data => {
-                setCourses(data); // Update courses state with API response
+                console.log(data);  // Log data to verify response
+                setCourses(data);  // Update courses state with API response
             })
-            .catch(error => console.error('Error fetching courses:', error));
+            .catch(error => {
+                console.error('Error fetching courses:', error);
+                setCourses([]);  // Optionally handle error by clearing courses
+            });
     }, []);
 
     return (
@@ -43,14 +49,20 @@ const TeacherCourseView = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {courses.map(course => (
-                            <tr key={course.id}>
-                                <td>{course.name}</td>
-                                <td>{course.instructorName}</td>
-                                <td>{course.maxEnrolled}</td>
-                                <td>{course.timeslot}</td>
+                        {courses.length > 0 ? (
+                            courses.map(course => (
+                                <tr key={course.id}>
+                                    <td>{course.name}</td>
+                                    <td>{course.instructorName}</td>
+                                    <td>{course.maxEnrolled}</td>
+                                    <td>{course.timeslot}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="4">No courses available</td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
                 <button onClick={() => navigate('/teacher-home')}>Go to Teacher Home</button>
