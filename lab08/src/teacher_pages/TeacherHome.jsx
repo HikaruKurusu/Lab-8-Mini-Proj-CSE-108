@@ -6,19 +6,43 @@ const TeacherCourseView = () => {
     const [name, setName] = useState('Teacher Home');
     const [courses, setCourses] = useState([]); // State to store courses
     const navigate = useNavigate();
+
     const handleLogout = () => {
         localStorage.clear();
         navigate('/');
-      };
+    };
+    const handleView = (courseId) =>{
+        localStorage.setItem('selectedCourseID', courseId);
+        navigate('/teacher-course-view');
+    }
+
     useEffect(() => {
-        // Fetch courses from the API
-        fetch('http://127.0.0.1:5000/api/courses') // Adjust URL if needed
-            .then(response => response.json())
-            .then(data => {
-                setCourses(data); // Update courses state with API response
-            })
-            .catch(error => console.error('Error fetching courses:', error));
-    }, []);
+        const fetchCourses = async () => {
+          try {
+            const teacherId = localStorage.getItem('userId'); // Assume teacher ID is stored in localStorage
+            if (!teacherId) {
+              console.error('Teacher ID not found');
+              return;
+            }
+            const response = await fetch(`http://127.0.0.1:5000/get_teacher_courses/${teacherId}`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch courses');
+            }
+            const data = await response.json();
+    
+            // Check if the data structure is correct
+            if (Array.isArray(data)) {
+              setCourses(data); // Set the courses in state
+            } else {
+              console.error('Invalid courses data format:', data);
+            }
+          } catch (error) {
+            console.error('Error fetching courses:', error);
+          }
+        };
+    
+        fetchCourses();
+      }, []);
 
     return (
         <div className="outerTeacherCourseView">
@@ -40,17 +64,27 @@ const TeacherCourseView = () => {
                             <th>Instructor</th>
                             <th>Max Enrollment</th>
                             <th>Timeslot</th>
+                            <th>View Students</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {courses.map(course => (
-                            <tr key={course.id}>
-                                <td>{course.name}</td>
-                                <td>{course.instructorName}</td>
-                                <td>{course.maxEnrolled}</td>
-                                <td>{course.timeslot}</td>
+                        {courses.length > 0 ? (
+                            courses.map(course => (
+                                <tr key={course.id}>
+                                    <td>{course.name}</td>
+                                    <td>{course.instructorName}</td>
+                                    <td>{course.maxEnrolled}</td>
+                                    <td>{course.timeslot}</td>
+                                    <td>
+                                    <button className="right" onClick={() => handleView(course.id)}> View </button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="4">No courses available</td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
                 <button onClick={() => navigate('/teacher-home')}>Go to Teacher Home</button>

@@ -33,35 +33,39 @@ const LoginRegister = () => {
   // };
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     try {
-      const response = await fetch('http://127.0.0.1:5000/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-  
-      const data = await response.json();
-      if (response.ok) {
-        setMessage(data.message);
-  
-        // Redirect based on userType
-        if (data.userType === "student") {
-          navigate('/student-home');
-        } else if (data.userType === "teacher") {
-          navigate("/teacher-home");
-        } else if (data.userType === "admin") {
-          navigate("/admin-home");
+        const response = await fetch('http://127.0.0.1:5000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            setMessage(data.message);
+
+            // Save userID to localStorage
+            localStorage.setItem('userId', data.userID);
+
+            // Redirect based on userType
+            if (data.userType === "student") {
+                navigate('/student-home');
+            } else if (data.userType === "teacher") {
+                navigate("/teacher-home");
+            } else if (data.userType === "admin") {
+                navigate("/admin-home");
+            }
+        } else {
+            setMessage(data.error);
         }
-      } else {
-        setMessage(data.error);
-      }
     } catch (error) {
-      setMessage("An error occurred. Please try again.");
+        setMessage("An error occurred. Please try again.");
     }
-  };
+};
+
   
 
   
