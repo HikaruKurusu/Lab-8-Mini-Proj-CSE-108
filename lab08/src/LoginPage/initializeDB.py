@@ -15,6 +15,8 @@ new_course3 = Courses(courseID=3, name='Math141', maxEnrolled=60, instructorName
 enrollStudent1 = studentEnrolledin(enrollmentID=1, studentID="S001", courseID=1)
 enrollStudent2 = studentEnrolledin(enrollmentID=2, studentID="S002", courseID=1)   
 enrollStudent3 = studentEnrolledin(enrollmentID=3, studentID="S002", courseID=2) 
+enrollStudent4 = studentEnrolledin(enrollmentID=4, studentID="S001", grade= 50.00,courseID=3)
+enrollStudent5 = studentEnrolledin(enrollmentID=5, studentID="S002", courseID=3)
 
 #Assign teachers to instruct courses
 
@@ -33,6 +35,8 @@ with app.app_context():
     db.session.add(enrollStudent1)
     db.session.add(enrollStudent2)
     db.session.add(enrollStudent3)
+    db.session.add(enrollStudent4)
+    db.session.add(enrollStudent5)
     db.session.add(assignInstructor1)
     db.session.commit()
 

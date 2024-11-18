@@ -156,21 +156,21 @@ def get_teacher_courses(teacher_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@app.route('/get_student_grades/courseID', methods=['GET'])
+@app.route('/get_student_grades/<string:course_id>', methods=['GET'])
 def get_student_grades(course_id):
     try:
         student_grades = (
-            db.session.query(studentEnrolledin)
+            db.session.query(UserInfo.name, studentEnrolledin.grade)
             .join(UserInfo, UserInfo.userID == studentEnrolledin.studentID)
             .filter(studentEnrolledin.courseID == course_id)
             .all()
         )
         student_list = [
             {
-                "name": student.name,
-                "grade": grade
+                "name": student_name,
+                "grade": float(grade) if grade else None  # Handle null grades
             }
-            for grade, student in student_grades
+            for student_name, grade in student_grades
         ]
 
         return jsonify(student_list), 200

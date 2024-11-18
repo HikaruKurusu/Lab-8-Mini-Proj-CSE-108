@@ -11,6 +11,10 @@ const TeacherCourseView = () => {
         localStorage.clear();
         navigate('/');
     };
+    const handleView = (courseId) =>{
+        localStorage.setItem('selectedCourseID', courseId);
+        navigate('/teacher-course-view');
+    }
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -71,6 +75,9 @@ const TeacherCourseView = () => {
                                     <td>{course.instructorName}</td>
                                     <td>{course.maxEnrolled}</td>
                                     <td>{course.timeslot}</td>
+                                    <td>
+                                    <button className="right" onClick={() => handleView(course.id)}> View </button>
+                                    </td>
                                 </tr>
                             ))
                         ) : (
