@@ -210,6 +210,29 @@ def get_name(student_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/unenroll_student', methods=['POST'])
+def unenroll_student():
+    data = request.get_json()
+    student_id = data.get('studentId')
+    course_id = data.get('courseId')
+
+    if not student_id or not course_id:
+        return jsonify({"error": "Student ID and Course ID are required"}), 400
+
+    try:
+        # Find the enrollment record
+        enrollment = studentEnrolledin.query.filter_by(studentID=student_id, courseID=course_id).first()
+        
+        if not enrollment:
+            return jsonify({"error": "Student is not enrolled in this course"}), 404
+        
+        # Remove the enrollment
+        db.session.delete(enrollment)
+        db.session.commit()
+        return jsonify({"message": "Unenrollment successful"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 
 

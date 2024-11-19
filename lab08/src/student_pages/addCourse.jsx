@@ -6,10 +6,12 @@ function AddCourse() {
   const [name, setName] = useState([]);
   const [courses, setCourses] = useState([]); // State for storing all courses
   const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
   };
+
   useEffect(() => {
     const fetchName = async () => {
       try {
@@ -23,8 +25,6 @@ function AddCourse() {
           throw new Error('Failed to fetch name');
         }
         const data = await response.json();
-
-        // Assuming the API returns an object with a 'name' property
         if (data.name) {
           setName(data.name); // Set the fetched name in the state
         } else {
@@ -39,21 +39,21 @@ function AddCourse() {
   }, []);
 
   // Fetch all available courses from the API
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:5000/api/courses'); // Adjust URL if necessary
-        if (!response.ok) {
-          throw new Error('Failed to fetch courses');
-        }
-        const data = await response.json();
-        setCourses(data);
-      } catch (error) {
-        console.error('Error fetching courses:', error);
+  const fetchCourses = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/courses');
+      if (!response.ok) {
+        throw new Error('Failed to fetch courses');
       }
-    };
+      const data = await response.json();
+      setCourses(data);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  };
 
-    fetchCourses();
+  useEffect(() => {
+    fetchCourses(); // Initial fetch of courses when the component loads
   }, []);
 
   const handleAddCourse = async (courseId) => {
@@ -81,6 +81,36 @@ function AddCourse() {
     } catch (error) {
       console.error('Error adding course:', error);
       alert('Could not enroll in the course. Please try again.');
+    }
+  };
+
+  const handleUnenrollCourse = async (courseId) => {
+    try {
+      const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+      if (!studentId) {
+        alert('Student ID not found. Please log in again.');
+        return;
+      }
+
+      const response = await fetch('http://127.0.0.1:5000/unenroll_student', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ studentId, courseId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to unenroll from course');
+      }
+
+      alert('Successfully unenrolled from the course!');
+      // Refetch the courses after unenrollment
+      fetchCourses(); // Update courses list after unenrollment
+    } catch (error) {
+      console.error('Error unenrolling from course:', error);
+      alert('Could not unenroll from the course. Please try again.');
     }
   };
 
@@ -139,12 +169,20 @@ function AddCourse() {
                 <td>{course.maxEnrolled}</td>
                 <td>
                   <button
-                    onClick={() => handleAddCourse(course.id)}
+                    onClick={() => handleAddCourse(course.id)} // Use the correct course ID
                     className="add-button"
                   >
                     Enroll
                   </button>
-                </td>
+                
+                  <button
+                    onClick={() => handleUnenrollCourse(course.id)} // Use the correct course ID
+                    className="add-button"
+                  >
+                    Unenroll
+                  </button>
+                  </td>
+
               </tr>
             ))}
           </tbody>
