@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function AdminInstructorTeach() {
   const [name, setName] = useState([]);
+  const [teachers, setTeachers] = useState([]); // State for storing teachers
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -22,10 +23,11 @@ function AdminInstructorTeach() {
       navigate("/admin-user-info");
     }
   };
+
   useEffect(() => {
     const fetchName = async () => {
       try {
-        const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+        const studentId = localStorage.getItem('userId');
         if (!studentId) {
           console.error('Student ID not found');
           return;
@@ -35,10 +37,8 @@ function AdminInstructorTeach() {
           throw new Error('Failed to fetch name');
         }
         const data = await response.json();
-
-        // Assuming the API returns an object with a 'name' property
         if (data.name) {
-          setName(data.name); // Set the fetched name in the state
+          setName(data.name);
         } else {
           console.error('Invalid name data format:', data);
         }
@@ -47,7 +47,21 @@ function AdminInstructorTeach() {
       }
     };
 
+    const fetchTeachers = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/get_teachers');
+        if (!response.ok) {
+          throw new Error('Failed to fetch teachers');
+        }
+        const data = await response.json();
+        setTeachers(data); // Set the fetched teachers in the state
+      } catch (error) {
+        console.error('Error fetching teachers:', error);
+      }
+    };
+
     fetchName();
+    fetchTeachers(); // Fetch teachers when component mounts
   }, []);
 
   return (
@@ -60,30 +74,41 @@ function AdminInstructorTeach() {
         </button>
       </div>
       <div className="Header">
-        <button
-          className="navButton"
-          onClick={() => handleButtonClick("admincourses")}
-        >
+        <button className="navButton" onClick={() => handleButtonClick("admincourses")}>
           Courses
         </button>
-        <button
-          className="navButton"
-          onClick={() => handleButtonClick("admininstructorteaches")}
-        >
+        <button className="navButton" onClick={() => handleButtonClick("admininstructorteaches")}>
           Instructor
         </button>
-        <button
-          className="navButton"
-          onClick={() => handleButtonClick("adminstudentenrolledin")}
-        >
+        <button className="navButton" onClick={() => handleButtonClick("adminstudentenrolledin")}>
           Student
         </button>
-        <button
-          className="navButton"
-          onClick={() => handleButtonClick("adminuserinfo")}
-        >
+        <button className="navButton" onClick={() => handleButtonClick("adminuserinfo")}>
           User Info
         </button>
+      </div>
+      
+      {/* Teachers Table */}
+      <div className="teachersTableContainer">
+        <h2>Teachers List</h2>
+        <table className="teachersTable">
+          <thead>
+            <tr>
+              <th>UserID</th>
+              <th>Name</th>
+              <th>User Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            {teachers.map((teacher) => (
+              <tr key={teacher.userID}>
+                <td>{teacher.userID}</td>
+                <td>{teacher.name}</td>
+                <td>{teacher.userType}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

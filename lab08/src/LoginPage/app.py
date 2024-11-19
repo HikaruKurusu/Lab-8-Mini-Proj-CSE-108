@@ -233,6 +233,69 @@ def unenroll_student():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+@app.route('/create_course', methods=['POST'])
+def create_course():
+    data = request.get_json()
+
+    # Get course details from the request data
+    name = data.get('name')
+    instructor_name = data.get('instructorName')
+    max_enrolled = data.get('maxEnrolled')
+    timeslot = data.get('timeslot')
+
+    # Validate that all fields are provided
+    if not name or not instructor_name or not max_enrolled or not timeslot:
+        return jsonify({"error": "All fields are required"}), 400
+
+    try:
+        # Create a new course
+        new_course = Courses(
+            name=name,
+            instructorName=instructor_name,
+            maxEnrolled=max_enrolled,
+            timeslot=timeslot
+        )
+
+        # Add the new course to the database
+        db.session.add(new_course)
+        db.session.commit()
+
+        return jsonify({"message": "Course created successfully", "courseID": new_course.courseID}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+@app.route('/delete_course/<int:course_id>', methods=['DELETE'])
+def delete_course(course_id):
+    # Logic to delete the course from the database
+    try:
+        course = Courses.query.get(course_id)  # Corrected from 'Course' to 'Courses'
+        if not course:
+            return jsonify({'error': 'Course not found'}), 404
+        db.session.delete(course)
+        db.session.commit()
+        return jsonify({'message': 'Course deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/get_teachers', methods=['GET'])
+def get_teachers():
+    try:
+        # Query the UserInfo table for all users with userType = "teacher"
+        teachers = UserInfo.query.filter_by(userType="teacher").all()
+
+        # Format the result into a list of dictionaries
+        teachers_list = [
+            {
+                "userID": teacher.userID,
+                "name": teacher.name,
+                "userType": teacher.userType
+            }
+            for teacher in teachers
+        ]
+
+        return jsonify(teachers_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 

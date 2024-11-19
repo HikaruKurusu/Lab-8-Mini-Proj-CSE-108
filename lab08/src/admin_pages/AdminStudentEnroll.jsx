@@ -84,6 +84,7 @@ function AdminStudentEnroll() {
         >
           User Info
         </button>
+      
       </div>
     </div>
   );
