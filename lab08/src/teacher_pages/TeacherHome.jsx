@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './TeacherHome.css';
 
-const TeacherCourseView = () => {
+const TeacherHome = () => {
   const [name, setName] = useState('Teacher');
   const [courses, setCourses] = useState([]); // State to store courses
   const navigate = useNavigate();
@@ -101,4 +101,4 @@ const TeacherCourseView = () => {
   );
 };
 
-export default TeacherCourseView;
+export default TeacherHome;
