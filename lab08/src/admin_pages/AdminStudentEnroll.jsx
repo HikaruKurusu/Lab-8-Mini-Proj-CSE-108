@@ -9,6 +9,10 @@ function AdminStudentEnroll() {
   const [studentPassword, setStudentPassword] = useState('');
   const [userType, setUserType] = useState('student');
   const [students, setStudents] = useState([]);  // State to store list of students
+  const [editingEnrollmentID, setEditingEnrollmentID] = useState(null);  // State for which enrollment is being edited
+  const [editingStudentID, setEditingStudentID] = useState('');
+  const [editingCourseID, setEditingCourseID] = useState('');
+  const [editingGrade, setEditingGrade] = useState('');
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -125,6 +129,45 @@ function AdminStudentEnroll() {
     }
   };
 
+  // Edit Student API Call
+  const updateEnrollment = async () => {
+    const updatedData = {
+      studentID: editingStudentID,
+      courseID: editingCourseID,
+      grade: editingGrade
+    };
+
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/update_enrollment/${editingEnrollmentID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Enrollment updated successfully');
+        fetchAllStudents();  // Refresh the student list after update
+        setEditingEnrollmentID(null);  // Close the edit form
+      } else {
+        alert(data.error || 'Failed to update enrollment');
+      }
+    } catch (error) {
+      console.error('Error updating enrollment:', error);
+      alert('Error updating enrollment');
+    }
+  };
+
+  // Trigger Edit Form
+  const startEditing = (student) => {
+    setEditingEnrollmentID(student.enrollmentID);
+    setEditingStudentID(student.studentID);
+    setEditingCourseID(student.courseID);
+    setEditingGrade(student.grade);
+  };
+
   return (
     <div className="outerAdminHome">
       <div className="outerHeader">
@@ -170,15 +213,15 @@ function AdminStudentEnroll() {
           value={studentID}
           onChange={(e) => setStudentID(e.target.value)}
         />
-        <label>Name:</label>
+        <label>Student ID:</label>
         <input
           type="text"
           value={studentName}
           onChange={(e) => setStudentName(e.target.value)}
         />
-        <label>Password:</label>
+        <label>Course ID:</label>
         <input
-          type="password"
+          type="text"
           value={studentPassword}
           onChange={(e) => setStudentPassword(e.target.value)}
         />
@@ -190,6 +233,33 @@ function AdminStudentEnroll() {
         <button onClick={addStudent}>Add Student</button>
       </div>
 
+      {/* Edit Enrollment Form */}
+      {editingEnrollmentID && (
+        <div className="editEnrollmentForm">
+          <h3>Edit Enrollment</h3>
+          <label>Student ID:</label>
+          <input
+            type="text"
+            value={editingStudentID}
+            onChange={(e) => setEditingStudentID(e.target.value)}
+          />
+          <label>Course ID:</label>
+          <input
+            type="number"
+            value={editingCourseID}
+            onChange={(e) => setEditingCourseID(e.target.value)}
+          />
+          <label>Grade:</label>
+          <input
+            type="number"
+            value={editingGrade}
+            onChange={(e) => setEditingGrade(e.target.value)}
+          />
+          <button onClick={updateEnrollment}>Update Enrollment</button>
+          <button onClick={() => setEditingEnrollmentID(null)}>Cancel</button>
+        </div>
+      )}
+
       {/* Display List of Students */}
       <div className="studentsList">
         <h3>All Students</h3>
@@ -197,7 +267,7 @@ function AdminStudentEnroll() {
           <thead>
             <tr>
               <th>Enrollment ID</th>
-              <th>Student Name</th>
+              <th>Student ID</th>
               <th>Course ID</th>
               <th>Grade</th>
               <th>Actions</th>
@@ -211,6 +281,7 @@ function AdminStudentEnroll() {
                 <td>{student.courseID}</td>
                 <td>{student.grade}</td>
                 <td>
+                  <button onClick={() => startEditing(student)}>Edit</button>
                   <button onClick={() => deleteStudent(student.enrollmentID)}>Delete</button>
                 </td>
               </tr>
