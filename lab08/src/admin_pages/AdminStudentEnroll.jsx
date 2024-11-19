@@ -8,6 +8,7 @@ function AdminStudentEnroll() {
   const [studentName, setStudentName] = useState('');
   const [studentPassword, setStudentPassword] = useState('');
   const [userType, setUserType] = useState('student');
+  const [students, setStudents] = useState([]);  // State to store list of students
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -50,8 +51,27 @@ function AdminStudentEnroll() {
     }
   };
 
+  const fetchAllStudents = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/get_students');
+      if (!response.ok) {
+        throw new Error('Failed to fetch students');
+      }
+      const data = await response.json();
+
+      if (data && Array.isArray(data)) {
+        setStudents(data);
+      } else {
+        console.error('Invalid data format:', data);
+      }
+    } catch (error) {
+      console.error('Error fetching students:', error);
+    }
+  };
+
   useEffect(() => {
     fetchStudentName();
+    fetchAllStudents(); // Fetch all students when component mounts
   }, []);
 
   // Add Student API Call
@@ -75,7 +95,7 @@ function AdminStudentEnroll() {
 
       if (response.ok) {
         alert('Student added successfully');
-        // Optionally, clear the form or update the UI
+        fetchAllStudents();  // Refresh the student list after adding
       } else {
         alert(data.error || 'Failed to add student');
       }
@@ -95,6 +115,7 @@ function AdminStudentEnroll() {
 
       if (response.ok) {
         alert('Student deleted successfully');
+        fetchAllStudents();  // Refresh the student list after deletion
       } else {
         alert(data.error || 'Failed to delete student');
       }
@@ -169,12 +190,17 @@ function AdminStudentEnroll() {
         <button onClick={addStudent}>Add Student</button>
       </div>
 
-      {/* Delete Student Button */}
-      <div className="deleteStudent">
-        <h3>Delete Student</h3>
-        <button onClick={() => deleteStudent(studentID)}>
-          Delete Student
-        </button>
+      {/* Display List of Students */}
+      <div className="studentsList">
+        <h3>All Students</h3>
+        <ul>
+          {students.map((student) => (
+            <li key={student.userID}>
+              {student.name} (ID: {student.userID})
+              <button onClick={() => deleteStudent(student.userID)}>Delete</button>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
