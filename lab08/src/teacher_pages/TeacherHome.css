@@ -9,16 +9,17 @@ body {
 }
 
 .outerTeacherHome {
-    width: 90%;
-    max-width: 800px;
+    width: 1000px; /* Matches width for consistency */
+    height: 600px; /* Matches height for consistency */
+    max-height: 800px;
     background-color: lightblue;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     border: 1px solid #000;
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative; /* Allows positioning within this container */
 }
 
 .outerTeacherHome .outerHeader {
@@ -26,10 +27,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     padding: 10px;
     border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
+    background-color: lightblue; /* Matches the container's background */
+    position: sticky; /* Makes it stick to the top */
+    top: 0; /* Sticks to the top of the parent container */
+    z-index: 10; /* Ensures it appears above other content */
 }
 
 .outerTeacherHome .outerHeader .left,
@@ -41,12 +44,52 @@ body {
 
 .outerTeacherHome .outerHeader .left {
     text-align: left;
+    background-color: lightblue; /* Matches the container's background */
 }
 
-.outerTeacherHome .outerHeader .right button {
-    width: auto;
-    padding: 5px 15px;
-    font-size: 14px; 
+.outerTeacherHome .outerHeader .center {
+    background-color: lightblue; /* Matches the container's background */
+}
+
+.outerTeacherHome .outerHeader .right {
+    text-align: right;
+}
+
+.outerTeacherHome button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.outerTeacherHome button:hover {
+    background-color: #0056b3;
+}
+
+.outerTeacherHome .lefts {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: gray;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.outerTeacherHome .lefts:hover {
+    background-color: gray;
 }
 
 .outerTeacherHome .innerTeacherHome {
