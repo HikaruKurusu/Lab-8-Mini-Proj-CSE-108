@@ -380,46 +380,47 @@ def delete_teacher(instructionID):
 def add_student():
     data = request.get_json()
 
-    name = data.get('name')
-    userID = data.get('userID')
-    password = data.get('password')
-    userType = data.get('userType')  # Ensure userType is set to "student"
+    enrollmentID = data.get('enrollmentID')
+    studentID = data.get('studentID')
+    courseID = data.get('courseID')
+    grade = data.get('grade') 
 
-    if not name or not userID or not password or userType != "student":
+    if not enrollmentID or not studentID or not courseID or not grade:
         return jsonify({"error": "All fields are required, and userType must be 'student'"}), 400
 
     try:
-        # Check if userID already exists
-        existing_user = UserInfo.query.filter_by(userID=userID).first()
+        # Check if enrollmentID already exists
+        existing_user = studentEnrolledin.query.filter_by(enrollmentID=enrollmentID).first()
         if existing_user:
             return jsonify({"error": "User ID already exists"}), 400
 
         # Create new student
-        new_student = UserInfo(name=name, userID=userID, password=password, userType="student")
-        db.session.add(new_student)
+        new_enrollment = studentEnrolledin(enrollmentID=enrollmentID, studentID=studentID, courseID=courseID, grade=grade)
+        db.session.add(new_enrollment)
         db.session.commit()
 
         return jsonify({
-            "userID": new_student.userID,
-            "name": new_student.name,
-            "userType": new_student.userType
+            "enrollmentID": new_enrollment.enrollmentID,
+            "studentID": new_enrollment.studentID,
+            "courseID": new_enrollment.courseID,
+            "grade": new_enrollment.grade
         }), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-@app.route('/delete_student/<userID>', methods=['DELETE'])
-def delete_student(userID):
+@app.route('/delete_student/<enrollmentID>', methods=['DELETE'])
+def delete_student(enrollmentID):
     try:
         # Find the student by userID
-        student = UserInfo.query.filter_by(userID=userID).first()
+        student = studentEnrolledin.query.filter_by(enrollmentID=enrollmentID).first()
 
         if not student:
             return jsonify({"error": "Student not found"}), 404
 
         # Check if the student is enrolled in any courses, handle foreign key constraints if needed
         # Example: you may want to delete any related enrollments before deleting the student
-        student_enrollments = studentEnrolledin.query.filter_by(studentID=userID).all()
+        student_enrollments = studentEnrolledin.query.filter_by(enrollmentID=enrollmentID).all()
         for enrollment in student_enrollments:
             db.session.delete(enrollment)
 
