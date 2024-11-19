@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from sqlalchemy import func
 import sqlite3
 app = Flask(__name__)
 CORS(app)
@@ -72,33 +73,32 @@ def login():
 
 @app.route('/api/courses', methods=['GET'])
 def get_courses():
-    # try:
-    #     courses_taught = (
-    #         db.session.Query(Courses)
-    #         .join(instructorTeaches, Courses.courseID == instructorTeaches.courseID)
-    #         .filter(instructorTeaches.teacherID == instructorID)
-    #     )
-    #     courses_list = [
-    #         {
-    #             "name": course.name,
-    #             "instructorName": course.instructorName,
-    #             "maxEnrolled": course.maxEnrolled,
-    #             "timeslot": course.timeslot
-    #         }
-    #         for course in courses_taught
-    #     ]
+    courses = (
+        db.session.query(
+            Courses.courseID,
+            Courses.name,
+            Courses.instructorName,
+            Courses.maxEnrolled.label("maxSeats"),
+            Courses.timeslot,
+            func.count(studentEnrolledin.studentID).label("studentsEnrolled")
+        )
+        .join(studentEnrolledin, Courses.courseID == studentEnrolledin.courseID, isouter=True)
+        .group_by(
+            Courses.courseID,
+        )
+        .all()
+    )
 
-    #     return jsonify(courses_list), 200
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
-    courses = Courses.query.all()  # Fetch all courses
     courses_list = [
         {
             "id": course.courseID,
             "name": course.name,
             "instructorName": course.instructorName,
-            "maxEnrolled": course.maxEnrolled,
-            "timeslot": course.timeslot
+            "maxEnrolled": course.maxSeats,
+            "timeslot": course.timeslot,
+            "studentsEnrolled": course.studentsEnrolled
+
+
         } for course in courses
     ]
     return jsonify(courses_list), 200
@@ -106,11 +106,28 @@ def get_courses():
 @app.route('/get_student_courses/<string:student_id>', methods=['GET'])
 def get_student_courses(student_id):
     try:
-        # Query the database for courses the student is enrolled in
+        # Create a subquery to count students enrolled in each course
+        student_count_subquery = (
+            db.session.query(
+                studentEnrolledin.courseID,
+                func.count(studentEnrolledin.studentID).label('studentsEnrolled')
+            )
+            .group_by(studentEnrolledin.courseID)
+            .subquery()  # Turn this query into a subquery
+        )
+
+        # Now query the main Courses table and join with the student enrollment table
         enrolled_courses = (
-            db.session.query(Courses)
-            .join(studentEnrolledin, Courses.courseID == studentEnrolledin.courseID)
-            .filter(studentEnrolledin.studentID == student_id)
+            db.session.query(
+                Courses.name,
+                Courses.instructorName,
+                Courses.maxEnrolled,
+                Courses.timeslot,
+                student_count_subquery.c.studentsEnrolled  # Reference the studentsEnrolled from the subquery
+            )
+            .join(studentEnrolledin, studentEnrolledin.courseID == Courses.courseID)  # Join studentEnrolledin for filtering
+            .join(student_count_subquery, student_count_subquery.c.courseID == Courses.courseID)  # Join the subquery for student counts
+            .filter(studentEnrolledin.studentID == student_id)  # Filter for the specific student
             .all()
         )
         
@@ -120,7 +137,8 @@ def get_student_courses(student_id):
                 "name": course.name,
                 "instructorName": course.instructorName,
                 "maxEnrolled": course.maxEnrolled,
-                "timeslot": course.timeslot
+                "timeslot": course.timeslot,
+                "studentsEnrolled": course.studentsEnrolled
             }
             for course in enrolled_courses
         ]
@@ -128,6 +146,7 @@ def get_student_courses(student_id):
         return jsonify(courses_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     
 @app.route('/get_teacher_courses/<string:teacher_id>', methods=['GET'])
 def get_teacher_courses(teacher_id):
@@ -187,9 +206,27 @@ def enroll_student():
         return jsonify({"error": "Student ID and Course ID are required"}), 400
 
     try:
+        # Check if the student is already enrolled in the course
         existing_enrollment = studentEnrolledin.query.filter_by(studentID=student_id, courseID=course_id).first()
         if existing_enrollment:
             return jsonify({"error": "Student is already enrolled in this course"}), 400
+        
+        # Get the current count of students enrolled in the course
+        current_enrollment_count = db.session.query(func.count(studentEnrolledin.studentID)) \
+            .filter(studentEnrolledin.courseID == course_id) \
+            .scalar()  # This returns the count as an integer
+        
+        # Get the max enrollment for the course
+        course = db.session.query(Courses.maxEnrolled).filter_by(courseID=course_id).first()
+        
+        if not course:
+            return jsonify({"error": "Course not found"}), 404
+        
+        # If the current enrollment count is greater than or equal to maxEnrolled, return an error
+        if current_enrollment_count >= course.maxEnrolled:
+            return jsonify({"error": "Course is full, cannot enroll"}), 400
+        
+        # Proceed with enrollment if there is space
         enrollment = studentEnrolledin(studentID=student_id, courseID=course_id)
         db.session.add(enrollment)
         db.session.commit()
@@ -197,6 +234,7 @@ def enroll_student():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
     
 
 @app.route('/get_name/<string:student_id>', methods=['GET'])
@@ -280,14 +318,14 @@ def delete_course(course_id):
 def get_teachers():
     try:
         # Query the UserInfo table for all users with userType = "teacher"
-        teachers = UserInfo.query.filter_by(userType="teacher").all()
+        teachers = db.session.query(instructorTeaches).all()
 
         # Format the result into a list of dictionaries
         teachers_list = [
             {
-                "userID": teacher.userID,
-                "name": teacher.name,
-                "userType": teacher.userType
+                "instructionID": teacher.instructionID,
+                "teacherID": teacher.teacherID,
+                "courseID": teacher.courseID
             }
             for teacher in teachers
         ]
@@ -298,45 +336,39 @@ def get_teachers():
 @app.route('/add_teacher', methods=['POST'])
 def add_teacher():
     data = request.get_json()
+    instructionID = data.get('instructionID')
+    teacherID = data.get('teacherID')
+    courseID = data.get('courseID')
 
-    name = data.get('name')
-    userID = data.get('userID')
-    password = data.get('password')
-    userType = data.get('userType')
-
-    if not name or not userID or not password or not userType:
+    if not instructionID or not teacherID or not courseID:
         return jsonify({"error": "All fields are required"}), 400
-
+    
     try:
-        # Check if userID already exists
-        existing_user = UserInfo.query.filter_by(userID=userID).first()
-        if existing_user:
-            return jsonify({"error": "User ID already exists"}), 400
-
-        # Create new teacher
-        new_teacher = UserInfo(name=name, userID=userID, password=password, userType=userType)
-        db.session.add(new_teacher)
+        existing_assignment = instructorTeaches.query.filter_by(instructionID=instructionID).first()
+        if existing_assignment:
+            return jsonify({"error": "instruction ID already exsits"}), 400
+        new_instruction = instructorTeaches(instructionID = instructionID, teacherID = teacherID, courseID = courseID)
+        db.session.add(new_instruction)
         db.session.commit()
-
         return jsonify({
-            "userID": new_teacher.userID,
-            "name": new_teacher.name,
-            "userType": new_teacher.userType
+            "instructionID": new_instruction.instructionID,
+            "teacherID": new_instruction.teacherID,
+            "courseID": new_instruction.courseID
         }), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
-@app.route('/delete_teacher/<userID>', methods=['DELETE'])
-def delete_teacher(userID):
+@app.route('/delete_teacher/<instructionID>', methods=['DELETE'])
+def delete_teacher(instructionID):
     try:
         # Find the teacher by userID
-        teacher = UserInfo.query.filter_by(userID=userID).first()
+        instructionAssignment = instructorTeaches.query.filter_by(instructionID=instructionID).first()
 
-        if not teacher:
-            return jsonify({"error": "Teacher not found"}), 404
+        if not instructionAssignment:
+            return jsonify({"error": "Instruction assignment not found"}), 404
 
         # Delete the teacher
-        db.session.delete(teacher)
+        db.session.delete(instructionAssignment)
         db.session.commit()
 
         return jsonify({"message": "Teacher deleted successfully"}), 200
@@ -403,14 +435,15 @@ def delete_student(userID):
 def get_students():
     try:
         # Query the UserInfo table for all users with userType = "student"
-        students = UserInfo.query.filter_by(userType="student").all()
+        students = db.session.query(studentEnrolledin).all()
 
         # Format the result into a list of dictionaries
         students_list = [
             {
-                "userID": student.userID,
-                "name": student.name,
-                "userType": student.userType
+                "enrollmentID": student.enrollmentID,
+                "studentID": student.studentID,
+                "courseID": student.courseID,
+                "grade": student.grade
             }
             for student in students
         ]

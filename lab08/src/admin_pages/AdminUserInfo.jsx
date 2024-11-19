@@ -105,25 +105,25 @@ function AdminUserInfo() {
       </div>
       <div className="Header">
         <button
-          className="navButton"
+          className="Courses"
           onClick={() => handleButtonClick("admincourses")}
         >
           Courses
         </button>
         <button
-          className="navButton"
+          className="navButton1"
           onClick={() => handleButtonClick("admininstructorteaches")}
         >
           Instructor
         </button>
         <button
-          className="navButton"
+          className="navButton2"
           onClick={() => handleButtonClick("adminstudentenrolledin")}
         >
           Student
         </button>
         <button
-          className="navButton"
+          className="navButton3"
           onClick={() => handleButtonClick("adminuserinfo")}
         >
           User Info
