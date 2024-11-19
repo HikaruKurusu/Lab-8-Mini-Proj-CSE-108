@@ -1,13 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './addCourse.css';
 
 function AddCourse() {
-  const [name, setName] = useState('Student');
+  const [name, setName] = useState([]);
+  const [courses, setCourses] = useState([]); // State for storing all courses
   const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
+  };
+
+  useEffect(() => {
+    const fetchName = async () => {
+      try {
+        const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+        if (!studentId) {
+          console.error('Student ID not found');
+          return;
+        }
+        const response = await fetch(`http://127.0.0.1:5000/get_name/${studentId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch name');
+        }
+        const data = await response.json();
+        if (data.name) {
+          setName(data.name); // Set the fetched name in the state
+        } else {
+          console.error('Invalid name data format:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching name:', error);
+      }
+    };
+
+    fetchName();
+  }, []);
+
+  // Fetch all available courses from the API
+  const fetchCourses = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/courses');
+      if (!response.ok) {
+        throw new Error('Failed to fetch courses');
+      }
+      const data = await response.json();
+      setCourses(data);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCourses(); // Initial fetch of courses when the component loads
+  }, []);
+
+  const handleAddCourse = async (courseId) => {
+    try {
+      const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+      if (!studentId) {
+        alert('Student ID not found. Please log in again.');
+        return;
+      }
+
+      const response = await fetch(`http://127.0.0.1:5000/enroll_student`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ studentId, courseId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add course');
+      }
+
+      alert('Successfully enrolled in the course!');
+    } catch (error) {
+      console.error('Error adding course:', error);
+      alert('Could not enroll in the course. Please try again.');
+    }
+  };
+
+  const handleUnenrollCourse = async (courseId) => {
+    try {
+      const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+      if (!studentId) {
+        alert('Student ID not found. Please log in again.');
+        return;
+      }
+
+      const response = await fetch('http://127.0.0.1:5000/unenroll_student', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ studentId, courseId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to unenroll from course');
+      }
+
+      alert('Successfully unenrolled from the course!');
+      // Refetch the courses after unenrollment
+      fetchCourses(); // Update courses list after unenrollment
+    } catch (error) {
+      console.error('Error unenrolling from course:', error);
+      alert('Could not unenroll from the course. Please try again.');
+    }
   };
 
   const handleButtonClick = (buttonName) => {
@@ -16,7 +120,8 @@ function AddCourse() {
     } else if (buttonName === 'yourCourses') {
       navigate('/student-home');
     } else if (buttonName === 'signOut') {
-      alert('Signing out...');
+      localStorage.clear();
+      navigate('/');
     }
   };
 
@@ -44,7 +149,7 @@ function AddCourse() {
         </button>
       </div>
       <div className="innerTeacherHome">
-        <h2 className="innerHeader">Add Courses</h2>
+        <h2 className="innerHeader">Available Courses</h2>
         <table className="courses">
           <thead>
             <tr>
@@ -55,6 +160,32 @@ function AddCourse() {
               <th>Add Class</th>
             </tr>
           </thead>
+          <tbody>
+            {courses.map((course) => (
+              <tr key={course.id}>
+                <td>{course.name}</td>
+                <td>{course.instructorName}</td>
+                <td>{course.timeslot}</td>
+                <td>{course.studentsEnrolled}/{course.maxEnrolled}</td>
+                <td>
+                  <button
+                    onClick={() => handleAddCourse(course.id)} // Use the correct course ID
+                    className="add-button"
+                  >
+                    Enroll
+                  </button>
+                
+                  <button
+                    onClick={() => handleUnenrollCourse(course.id)} // Use the correct course ID
+                    className="add-button"
+                  >
+                    Unenroll
+                  </button>
+                  </td>
+
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>

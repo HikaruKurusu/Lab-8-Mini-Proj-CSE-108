@@ -8,16 +8,17 @@ body {
 }
 
 .outerTeacherCourseView {
-    width: 90%;
-    max-width: 800px;
+    width: 1000px; /* Matches width for consistency */
+    height: 600px; /* Matches height for consistency */
+    max-height: 800px;
     background-color: lightblue;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     border: 1px solid #000;
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative; /* Allows positioning within this container */
 }
 
 .outerTeacherCourseView .outerHeader {
@@ -25,10 +26,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     padding: 10px;
     border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
+    background-color: lightblue; /* Matches the container's background */
+    position: sticky; /* Makes it stick to the top */
+    top: 0; /* Sticks to the top of the parent container */
+    z-index: 10; /* Ensures it appears above other content */
 }
 
 .outerTeacherCourseView .outerHeader .left,
@@ -36,6 +39,8 @@ body {
 .outerTeacherCourseView .outerHeader .right {
     flex: 1;
     text-align: center;
+    background-color: lightblue; /* Matches the container's background */
+
 }
 
 .outerTeacherCourseView .outerHeader .left {
@@ -55,6 +60,22 @@ body {
     padding: 20px;
     border-radius: 5px;
 }
+
+.outerTeacherCourseView button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
 
 .outerTeacherCourseView .innerHeader {
     text-align: center;

@@ -9,59 +9,41 @@ const LoginRegister = () => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-
-  //   try {
-  //     const response = await fetch('http://127.0.0.1:5000/login', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify({ username, password })
-  //     });
-
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       setMessage(data.message);
-  //     } else {
-  //       setMessage(data.error);
-  //     }
-  //   } catch (error) {
-  //     setMessage("An error occurred. Please try again.");
-  //   }
-  // };
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     try {
-      const response = await fetch('http://127.0.0.1:5000/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-  
-      const data = await response.json();
-      if (response.ok) {
-        setMessage(data.message);
-  
-        // Redirect based on userType
-        if (data.userType === "student") {
-          navigate('/student-home');
-        } else if (data.userType === "teacher") {
-          navigate("/teacher-home");
-        } else if (data.userType === "admin") {
-          navigate("/admin-home");
+        const response = await fetch('http://127.0.0.1:5000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            setMessage(data.message);
+
+            // Save userID to localStorage
+            localStorage.setItem('userId', data.userID);
+
+            // Redirect based on userType
+            if (data.userType === "student") {
+                navigate('/student-home');
+            } else if (data.userType === "teacher") {
+                navigate("/teacher-home");
+            } else if (data.userType === "admin") {
+                navigate("/admin-home");
+            }
+        } else {
+            setMessage(data.error);
         }
-      } else {
-        setMessage(data.error);
-      }
     } catch (error) {
-      setMessage("An error occurred. Please try again.");
+        setMessage("An error occurred. Please try again.");
     }
-  };
+};
+
   
 
   
@@ -93,41 +75,6 @@ const LoginRegister = () => {
         <button className="signInButton" type="submit">Sign In</button>
       </form>
       {message && <p>{message}</p>}
-      
-      <div
-          className="button-container"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "10px",
-            marginTop: "20px",
-          }}
-        >
-          <button
-            variant="contained"
-            className="circle-button"
-            onClick={() => navigate("/student-home")}
-            style={{ borderRadius: "50%", padding: "20px 30px" }}
-          >
-            Student
-          </button>
-          <button
-            variant="contained"
-            className="circle-button"
-            onClick={() => navigate("/teacher-home")}
-            style={{ borderRadius: "50%", padding: "20px 30px" }}
-          >
-            Teacher
-          </button>
-          <button
-            variant="contained"
-            className="circle-button"
-            onClick={() => navigate("/admin-home")}
-            style={{ borderRadius: "50%", padding: "20px 30px" }}
-          >
-            Admin
-          </button>
-      </div>
 
     </div>
     
