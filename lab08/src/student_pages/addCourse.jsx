@@ -166,7 +166,7 @@ function AddCourse() {
                 <td>{course.name}</td>
                 <td>{course.instructorName}</td>
                 <td>{course.timeslot}</td>
-                <td>{course.maxEnrolled}</td>
+                <td>{course.studentsEnrolled}/{course.maxEnrolled}</td>
                 <td>
                   <button
                     onClick={() => handleAddCourse(course.id)} // Use the correct course ID

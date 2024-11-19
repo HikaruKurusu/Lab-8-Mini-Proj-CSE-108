@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from sqlalchemy import func
 import sqlite3
 app = Flask(__name__)
 CORS(app)
@@ -72,33 +73,32 @@ def login():
 
 @app.route('/api/courses', methods=['GET'])
 def get_courses():
-    # try:
-    #     courses_taught = (
-    #         db.session.Query(Courses)
-    #         .join(instructorTeaches, Courses.courseID == instructorTeaches.courseID)
-    #         .filter(instructorTeaches.teacherID == instructorID)
-    #     )
-    #     courses_list = [
-    #         {
-    #             "name": course.name,
-    #             "instructorName": course.instructorName,
-    #             "maxEnrolled": course.maxEnrolled,
-    #             "timeslot": course.timeslot
-    #         }
-    #         for course in courses_taught
-    #     ]
+    courses = (
+        db.session.query(
+            Courses.courseID,
+            Courses.name,
+            Courses.instructorName,
+            Courses.maxEnrolled.label("maxSeats"),
+            Courses.timeslot,
+            func.count(studentEnrolledin.studentID).label("studentsEnrolled")
+        )
+        .join(studentEnrolledin, Courses.courseID == studentEnrolledin.courseID, isouter=True)
+        .group_by(
+            Courses.courseID,
+        )
+        .all()
+    )
 
-    #     return jsonify(courses_list), 200
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
-    courses = Courses.query.all()  # Fetch all courses
     courses_list = [
         {
             "id": course.courseID,
             "name": course.name,
             "instructorName": course.instructorName,
-            "maxEnrolled": course.maxEnrolled,
-            "timeslot": course.timeslot
+            "maxEnrolled": course.maxSeats,
+            "timeslot": course.timeslot,
+            "studentsEnrolled": course.studentsEnrolled
+
+
         } for course in courses
     ]
     return jsonify(courses_list), 200
@@ -106,11 +106,28 @@ def get_courses():
 @app.route('/get_student_courses/<string:student_id>', methods=['GET'])
 def get_student_courses(student_id):
     try:
-        # Query the database for courses the student is enrolled in
+        # Create a subquery to count students enrolled in each course
+        student_count_subquery = (
+            db.session.query(
+                studentEnrolledin.courseID,
+                func.count(studentEnrolledin.studentID).label('studentsEnrolled')
+            )
+            .group_by(studentEnrolledin.courseID)
+            .subquery()  # Turn this query into a subquery
+        )
+
+        # Now query the main Courses table and join with the student enrollment table
         enrolled_courses = (
-            db.session.query(Courses)
-            .join(studentEnrolledin, Courses.courseID == studentEnrolledin.courseID)
-            .filter(studentEnrolledin.studentID == student_id)
+            db.session.query(
+                Courses.name,
+                Courses.instructorName,
+                Courses.maxEnrolled,
+                Courses.timeslot,
+                student_count_subquery.c.studentsEnrolled  # Reference the studentsEnrolled from the subquery
+            )
+            .join(studentEnrolledin, studentEnrolledin.courseID == Courses.courseID)  # Join studentEnrolledin for filtering
+            .join(student_count_subquery, student_count_subquery.c.courseID == Courses.courseID)  # Join the subquery for student counts
+            .filter(studentEnrolledin.studentID == student_id)  # Filter for the specific student
             .all()
         )
         
@@ -120,7 +137,8 @@ def get_student_courses(student_id):
                 "name": course.name,
                 "instructorName": course.instructorName,
                 "maxEnrolled": course.maxEnrolled,
-                "timeslot": course.timeslot
+                "timeslot": course.timeslot,
+                "studentsEnrolled": course.studentsEnrolled
             }
             for course in enrolled_courses
         ]
@@ -128,6 +146,9 @@ def get_student_courses(student_id):
         return jsonify(courses_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
     
 @app.route('/get_teacher_courses/<string:teacher_id>', methods=['GET'])
 def get_teacher_courses(teacher_id):
