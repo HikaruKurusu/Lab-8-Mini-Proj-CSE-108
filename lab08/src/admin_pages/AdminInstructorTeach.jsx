@@ -4,12 +4,17 @@ import { useNavigate } from "react-router-dom";
 
 function AdminInstructorTeach() {
   const [name, setName] = useState([]);
-  const [teachers, setTeachers] = useState([]); // State for storing teachers
+  const [teachers, setTeachers] = useState([]);
   const [newTeacher, setNewTeacher] = useState({
     instructionID: "",
     teacherID: "",
     courseID: ""
-  }); // State for new teacher
+  });
+  const [editTeacher, setEditTeacher] = useState({
+    instructionID: "",
+    teacherID: "",
+    courseID: ""
+  }); // State for editing a teacher
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -59,14 +64,14 @@ function AdminInstructorTeach() {
           throw new Error('Failed to fetch teachers');
         }
         const data = await response.json();
-        setTeachers(data); // Set the fetched teachers in the state
+        setTeachers(data);
       } catch (error) {
         console.error('Error fetching teachers:', error);
       }
     };
 
     fetchName();
-    fetchTeachers(); // Fetch teachers when component mounts
+    fetchTeachers();
   }, []);
 
   const handleInputChange = (e) => {
@@ -76,17 +81,21 @@ function AdminInstructorTeach() {
       [name]: value
     }));
   };
-  
+
+  const handleEditInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditTeacher((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
   const handleAddTeacher = async (e) => {
     e.preventDefault();
-  
-    // Validate fields
     if (!newTeacher.instructionID || !newTeacher.teacherID || !newTeacher.courseID) {
       alert("Please fill in all fields");
       return;
     }
-  
     try {
       const response = await fetch("http://127.0.0.1:5000/add_teacher", {
         method: "POST",
@@ -95,7 +104,6 @@ function AdminInstructorTeach() {
         },
         body: JSON.stringify(newTeacher)
       });
-  
       if (response.ok) {
         alert("Teacher assignment added successfully!");
         const addedTeacher = await response.json();
@@ -115,10 +123,8 @@ function AdminInstructorTeach() {
       const response = await fetch(`http://127.0.0.1:5000/delete_teacher/${instructionID}`, {
         method: 'DELETE',
       });
-
       if (response.ok) {
         alert("Teacher deleted successfully!");
-        // Remove the deleted teacher from the list
         setTeachers(prevTeachers => prevTeachers.filter(teacher => teacher.instructionID !== instructionID));
       } else {
         throw new Error('Failed to delete teacher');
@@ -129,59 +135,67 @@ function AdminInstructorTeach() {
     }
   };
 
+  const handleUpdateTeacher = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/update_instructor_teaches/${editTeacher.instructionID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editTeacher)
+      });
+      if (response.ok) {
+        alert("Teacher assignment updated successfully!");
+        const updatedTeacher = await response.json();
+        setTeachers(prevTeachers =>
+          prevTeachers.map(teacher =>
+            teacher.instructionID === updatedTeacher.instructionID ? updatedTeacher : teacher
+          )
+        );
+        setEditTeacher({ instructionID: "", teacherID: "", courseID: "" });
+      } else {
+        throw new Error("Failed to update teacher assignment");
+      }
+    } catch (error) {
+      console.error("Error updating teacher assignment:", error);
+      alert("Error updating teacher assignment");
+    }
+  };
+
   return (
     <div className="outerAdminHome">
       <div className="outerHeader">
         <span className="left">Welcome {name}</span>
         <span className="center">ACME University</span>
-        <button className="right" onClick={handleLogout}>
-          Sign out
-        </button>
+        <button className="right" onClick={handleLogout}>Sign out</button>
       </div>
       <div className="Header">
-        <button className="navButton" onClick={() => handleButtonClick("admincourses")}>
-          Courses
-        </button>
-        <button className="navButton" onClick={() => handleButtonClick("admininstructorteaches")}>
-          Instructor
-        </button>
-        <button className="navButton" onClick={() => handleButtonClick("adminstudentenrolledin")}>
-          Student
-        </button>
-        <button className="navButton" onClick={() => handleButtonClick("adminuserinfo")}>
-          User Info
-        </button>
+        <button className="navButton" onClick={() => handleButtonClick("admincourses")}>Courses</button>
+        <button className="navButton" onClick={() => handleButtonClick("admininstructorteaches")}>Instructor</button>
+        <button className="navButton" onClick={() => handleButtonClick("adminstudentenrolledin")}>Student</button>
+        <button className="navButton" onClick={() => handleButtonClick("adminuserinfo")}>User Info</button>
       </div>
-      
+
       {/* Add Teacher Form */}
       <div className="addTeacherForm">
         <h2>Add New Instructor Assignment</h2>
         <form onSubmit={handleAddTeacher}>
-          <input
-            type="text"
-            name="instructionID"
-            value={newTeacher.instructionID}
-            onChange={handleInputChange}
-            placeholder="instructionID"
-            required
-          />
-          <input
-            type="text"
-            name="teacherID"
-            value={newTeacher.teacherID}
-            onChange={handleInputChange}
-            placeholder="teacherID"
-            required
-          />
-          <input
-            type="text"
-            name="courseID"
-            value={newTeacher.courseID}
-            onChange={handleInputChange}
-            placeholder="courseID"
-            required
-          />
+          <input type="text" name="instructionID" value={newTeacher.instructionID} onChange={handleInputChange} placeholder="instructionID" required />
+          <input type="text" name="teacherID" value={newTeacher.teacherID} onChange={handleInputChange} placeholder="teacherID" required />
+          <input type="text" name="courseID" value={newTeacher.courseID} onChange={handleInputChange} placeholder="courseID" required />
           <button type="submit">Add Teacher</button>
+        </form>
+      </div>
+
+      {/* Update Teacher Form */}
+      <div className="updateTeacherForm">
+        <h2>Update Instructor Assignment</h2>
+        <form onSubmit={handleUpdateTeacher}>
+          <input type="text" name="instructionID" value={editTeacher.instructionID} onChange={handleEditInputChange} placeholder="instructionID" required />
+          <input type="text" name="teacherID" value={editTeacher.teacherID} onChange={handleEditInputChange} placeholder="teacherID" required />
+          <input type="text" name="courseID" value={editTeacher.courseID} onChange={handleEditInputChange} placeholder="courseID" required />
+          <button type="submit">Update Teacher</button>
         </form>
       </div>
 
@@ -206,6 +220,9 @@ function AdminInstructorTeach() {
                 <td>
                   <button onClick={() => handleDeleteTeacher(teacher.instructionID)} className="deleteButton">
                     Delete
+                  </button>
+                  <button onClick={() => setEditTeacher({ ...teacher })} className="editButton">
+                    Edit
                   </button>
                 </td>
               </tr>
