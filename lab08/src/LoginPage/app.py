@@ -179,22 +179,44 @@ def get_teacher_courses(teacher_id):
 def get_student_grades(course_id):
     try:
         student_grades = (
-            db.session.query(UserInfo.name, studentEnrolledin.grade)
+            db.session.query(UserInfo.name, studentEnrolledin.grade, studentEnrolledin.enrollmentID)
             .join(UserInfo, UserInfo.userID == studentEnrolledin.studentID)
             .filter(studentEnrolledin.courseID == course_id)
             .all()
         )
         student_list = [
             {
+                "enrollmentID": enrollment_id,
                 "name": student_name,
                 "grade": float(grade) if grade else None  # Handle null grades
             }
-            for student_name, grade in student_grades
+            for student_name, grade, enrollment_id in student_grades
         ]
 
         return jsonify(student_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+@app.route('/edit_grade', methods=['PUT'])
+def edit_grade():
+    try:
+        data = request.json
+        enrollment_id = data.get('enrollmentID')
+        new_grade = data.get('grade')
+
+        if enrollment_id is None or new_grade is None:
+            return jsonify({"error": "Missing enrollmentID or grade"}), 400
+
+        enrollment = studentEnrolledin.query.filter_by(enrollmentID=enrollment_id).first()
+        if not enrollment:
+            return jsonify({"error": "Enrollment not found"}), 404
+
+        enrollment.grade = new_grade
+        db.session.commit()
+        return jsonify({"message": "Grade updated successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/enroll_student', methods=['POST'])
 def enroll_student():
