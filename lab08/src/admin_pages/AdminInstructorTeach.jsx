@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 function AdminInstructorTeach() {
   const [name, setName] = useState([]);
   const [teachers, setTeachers] = useState([]); // State for storing teachers
+  const [newTeacher, setNewTeacher] = useState({ name: "", userID: "", password: "", userType: "teacher" }); // State for new teacher
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -64,6 +65,63 @@ function AdminInstructorTeach() {
     fetchTeachers(); // Fetch teachers when component mounts
   }, []);
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewTeacher(prevState => ({ ...prevState, [name]: value }));
+  };
+
+  const handleAddTeacher = async (e) => {
+    e.preventDefault();
+
+    // Check if all fields are filled
+    if (!newTeacher.name || !newTeacher.userID || !newTeacher.password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/add_teacher', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTeacher),
+      });
+
+      if (response.ok) {
+        alert("Teacher added successfully!");
+        // After adding the teacher, update the teacher list
+        const addedTeacher = await response.json();
+        setTeachers(prevTeachers => [...prevTeachers, addedTeacher]);
+        setNewTeacher({ name: "", userID: "", password: "", userType: "teacher" }); // Reset form fields
+      } else {
+        throw new Error('Failed to add teacher');
+      }
+    } catch (error) {
+      console.error('Error adding teacher:', error);
+      alert("Error adding teacher");
+    }
+  };
+
+  const handleDeleteTeacher = async (userID) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/delete_teacher/${userID}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert("Teacher deleted successfully!");
+        // Remove the deleted teacher from the list
+        setTeachers(prevTeachers => prevTeachers.filter(teacher => teacher.userID !== userID));
+      } else {
+        throw new Error('Failed to delete teacher');
+      }
+    } catch (error) {
+      console.error('Error deleting teacher:', error);
+      alert("Error deleting teacher");
+    }
+  };
+
   return (
     <div className="outerAdminHome">
       <div className="outerHeader">
@@ -88,6 +146,38 @@ function AdminInstructorTeach() {
         </button>
       </div>
       
+      {/* Add Teacher Form */}
+      <div className="addTeacherForm">
+        <h2>Add New Teacher</h2>
+        <form onSubmit={handleAddTeacher}>
+          <input
+            type="text"
+            name="name"
+            value={newTeacher.name}
+            onChange={handleInputChange}
+            placeholder="Teacher's Name"
+            required
+          />
+          <input
+            type="text"
+            name="userID"
+            value={newTeacher.userID}
+            onChange={handleInputChange}
+            placeholder="User ID"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            value={newTeacher.password}
+            onChange={handleInputChange}
+            placeholder="Password"
+            required
+          />
+          <button type="submit">Add Teacher</button>
+        </form>
+      </div>
+
       {/* Teachers Table */}
       <div className="teachersTableContainer">
         <h2>Teachers List</h2>
@@ -97,6 +187,7 @@ function AdminInstructorTeach() {
               <th>UserID</th>
               <th>Name</th>
               <th>User Type</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -105,6 +196,11 @@ function AdminInstructorTeach() {
                 <td>{teacher.userID}</td>
                 <td>{teacher.name}</td>
                 <td>{teacher.userType}</td>
+                <td>
+                  <button onClick={() => handleDeleteTeacher(teacher.userID)} className="deleteButton">
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

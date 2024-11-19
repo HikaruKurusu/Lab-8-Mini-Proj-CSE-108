@@ -295,6 +295,110 @@ def get_teachers():
         return jsonify(teachers_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+@app.route('/add_teacher', methods=['POST'])
+def add_teacher():
+    data = request.get_json()
+
+    name = data.get('name')
+    userID = data.get('userID')
+    password = data.get('password')
+    userType = data.get('userType')
+
+    if not name or not userID or not password or not userType:
+        return jsonify({"error": "All fields are required"}), 400
+
+    try:
+        # Check if userID already exists
+        existing_user = UserInfo.query.filter_by(userID=userID).first()
+        if existing_user:
+            return jsonify({"error": "User ID already exists"}), 400
+
+        # Create new teacher
+        new_teacher = UserInfo(name=name, userID=userID, password=password, userType=userType)
+        db.session.add(new_teacher)
+        db.session.commit()
+
+        return jsonify({
+            "userID": new_teacher.userID,
+            "name": new_teacher.name,
+            "userType": new_teacher.userType
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+@app.route('/delete_teacher/<userID>', methods=['DELETE'])
+def delete_teacher(userID):
+    try:
+        # Find the teacher by userID
+        teacher = UserInfo.query.filter_by(userID=userID).first()
+
+        if not teacher:
+            return jsonify({"error": "Teacher not found"}), 404
+
+        # Delete the teacher
+        db.session.delete(teacher)
+        db.session.commit()
+
+        return jsonify({"message": "Teacher deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/add_student', methods=['POST'])
+def add_student():
+    data = request.get_json()
+
+    name = data.get('name')
+    userID = data.get('userID')
+    password = data.get('password')
+    userType = data.get('userType')  # Ensure userType is set to "student"
+
+    if not name or not userID or not password or userType != "student":
+        return jsonify({"error": "All fields are required, and userType must be 'student'"}), 400
+
+    try:
+        # Check if userID already exists
+        existing_user = UserInfo.query.filter_by(userID=userID).first()
+        if existing_user:
+            return jsonify({"error": "User ID already exists"}), 400
+
+        # Create new student
+        new_student = UserInfo(name=name, userID=userID, password=password, userType="student")
+        db.session.add(new_student)
+        db.session.commit()
+
+        return jsonify({
+            "userID": new_student.userID,
+            "name": new_student.name,
+            "userType": new_student.userType
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/delete_student/<userID>', methods=['DELETE'])
+def delete_student(userID):
+    try:
+        # Find the student by userID
+        student = UserInfo.query.filter_by(userID=userID).first()
+
+        if not student:
+            return jsonify({"error": "Student not found"}), 404
+
+        # Check if the student is enrolled in any courses, handle foreign key constraints if needed
+        # Example: you may want to delete any related enrollments before deleting the student
+        student_enrollments = studentEnrolledin.query.filter_by(studentID=userID).all()
+        for enrollment in student_enrollments:
+            db.session.delete(enrollment)
+
+        # Delete the student
+        db.session.delete(student)
+        db.session.commit()
+
+        return jsonify({"message": "Student deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 
 
