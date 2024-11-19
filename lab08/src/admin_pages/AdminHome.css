@@ -28,7 +28,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #ccc;
+
     background-color: lightblue; /* Matches the container's background */
     position: sticky; /* Makes it stick to the top */
     top: 0; /* Sticks to the top of the parent container */
@@ -103,9 +103,128 @@ body {
     text-align: center;
     margin-bottom: 20px;
     font-size: 24px;
-    border-bottom: 2px solid white;
+    background-color: lightblue;
+    color: white;
     padding-bottom: 10px;
 }
+
+.leftSection form {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    background-color: lightblue;
+
+    align-items: center;
+    margin-top: 20px;
+    
+}
+
+.innerTeacherHome form input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    color: white;
+    border: 1px solid #ccc;
+    background-color: lightblue;
+
+    border-radius: 5px;
+    font-size: 1em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.leftSection form input::placeholder {
+    color: white;
+
+    background-color: lightblue;
+
+}
+
+.innerTeacherHome form button {
+    width: 80%;
+    padding: 10px;
+    font-size: 1.2em;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+}
+
+.innerTeacherHome form button:hover {
+    background-color: #0056b3;
+}
+
+.outerAdminHome .content {
+    display: flex;
+    background-color: lightblue;
+    color: white;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.content .leftSection,
+.content .rightSection {
+    width: 48%; /* Each section takes up half the container with a small gap */
+    display: flex;
+    flex-direction: column;
+    background-color: lightblue;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    margin: 10px;
+    padding: 20px;
+}
+
+.content .rightSection {
+    overflow-y: auto; /* Allows scrolling if content overflows */
+    max-height: 400px; /* Adjust this to maintain aspect ratio */
+}
+
+.content .rightSection table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.content .rightSection th,
+.content .rightSection td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: left;
+}
+
+.content .rightSection th {
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+}
+
+.content .rightSection td {
+    background-color: lightblue;
+    border: 1px solid black;
+}
+
+.content .rightSection button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.content .rightSection button:hover {
+    background-color: #c0392b;
+}
+
+
 
 .outerAdminHome .courses {
     width: 100%;
