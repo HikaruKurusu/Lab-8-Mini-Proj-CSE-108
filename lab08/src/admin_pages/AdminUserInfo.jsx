@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import "./AdminUserInfo.css";
 import { useNavigate } from "react-router-dom";
 
 function AdminUserInfo() {
-  const [name, setName] = useState("Admin");
+  const [name, setName] = useState([]);
   const navigate = useNavigate();
 
+  
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
@@ -22,6 +23,33 @@ function AdminUserInfo() {
       navigate("/admin-user-info");
     }
   };
+  useEffect(() => {
+    const fetchName = async () => {
+      try {
+        const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+        if (!studentId) {
+          console.error('Student ID not found');
+          return;
+        }
+        const response = await fetch(`http://127.0.0.1:5000/get_name/${studentId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch name');
+        }
+        const data = await response.json();
+
+        // Assuming the API returns an object with a 'name' property
+        if (data.name) {
+          setName(data.name); // Set the fetched name in the state
+        } else {
+          console.error('Invalid name data format:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching name:', error);
+      }
+    };
+
+    fetchName();
+  }, []);
 
   return (
     <div className="outerAdminHome">
@@ -34,25 +62,25 @@ function AdminUserInfo() {
       </div>
       <div className="Header">
         <button
-          className="navButton"
+          className="Courses"
           onClick={() => handleButtonClick("admincourses")}
         >
           Courses
         </button>
         <button
-          className="navButton"
+          className="navButton1"
           onClick={() => handleButtonClick("admininstructorteaches")}
         >
           Instructor
         </button>
         <button
-          className="navButton"
+          className="navButton2"
           onClick={() => handleButtonClick("adminstudentenrolledin")}
         >
           Student
         </button>
         <button
-          className="navButton"
+          className="navButton3"
           onClick={() => handleButtonClick("adminuserinfo")}
         >
           User Info
