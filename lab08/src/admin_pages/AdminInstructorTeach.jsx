@@ -152,10 +152,10 @@ function AdminInstructorTeach() {
         <form onSubmit={handleAddTeacher}>
           <input
             type="text"
-            name="name"
+            name="instructionID"
             value={newTeacher.name}
             onChange={handleInputChange}
-            placeholder="Teacher's Name"
+            placeholder="instructionID"
             required
           />
           <input
@@ -163,15 +163,15 @@ function AdminInstructorTeach() {
             name="userID"
             value={newTeacher.userID}
             onChange={handleInputChange}
-            placeholder="User ID"
+            placeholder="teacherID"
             required
           />
           <input
-            type="password"
-            name="password"
+            type="text"
+            name="courseID"
             value={newTeacher.password}
             onChange={handleInputChange}
-            placeholder="Password"
+            placeholder="courseID"
             required
           />
           <button type="submit">Add Teacher</button>
