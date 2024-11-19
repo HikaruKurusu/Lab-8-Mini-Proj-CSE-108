@@ -4,14 +4,14 @@ import './StudentHome.css';
 
 function StudentHome() {
   const [name, setName] = useState([]);
-  const [courses, setCourses] = useState([]); // State for storing courses
+  const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
 
   // Fetch student's name on component load
   useEffect(() => {
     const fetchName = async () => {
       try {
-        const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+        const studentId = localStorage.getItem('userId');
         if (!studentId) {
           console.error('Student ID not found');
           return;
@@ -24,7 +24,7 @@ function StudentHome() {
 
         // Assuming the API returns an object with a 'name' property
         if (data.name) {
-          setName(data.name); // Set the fetched name in the state
+          setName(data.name);
         } else {
           console.error('Invalid name data format:', data);
         }
@@ -40,7 +40,7 @@ function StudentHome() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+        const studentId = localStorage.getItem('userId');
         if (!studentId) {
           console.error('Student ID not found');
           return;

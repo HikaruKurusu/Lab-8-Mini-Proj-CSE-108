@@ -1,6 +1,6 @@
-from app import db, Student, app  # Import necessary components from your app
+from app import db, Student, app 
 
 with app.app_context():
-    users = Student.query.all()  # Retrieve all users from the Student table
+    users = Student.query.all()
     for user in users:
-        print(f"Name: {user.name}, Password: {user.password}")  # Display each user's details
+        print(f"Name: {user.name}, Password: {user.password}")

@@ -1,7 +1,7 @@
 /* Make sure to keep the base styles for outerAdminHome */
 .outerAdminHome {
     width: 1000px;
-    height: auto; /* Let the height grow with the content */
+    height: auto;
     background-color: lightblue;
     display: flex;
     flex-direction: column;
@@ -51,7 +51,7 @@
 
 .content .leftSection,
 .content .rightSection {
-    width: 48%; /* Each section takes up half the container */
+    width: 48%;
     background-color: lightblue;
     border-radius: 5px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
@@ -61,8 +61,8 @@
 }
 
 .content .rightSection {
-    overflow-y: auto; /* Enables scrolling for the table if the content overflows */
-    max-height: 400px; /* You can adjust this to control table height */
+    overflow-y: auto;
+    max-height: 400px;
 }
 
 .content .rightSection table {
