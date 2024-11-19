@@ -212,6 +212,13 @@ function AdminHome() {
           >
             <input
               type="text"
+              placeholder="Course ID"
+              value={editingCourseId}
+              onChange={(e) => setEditingCourseId(e.target.value)}
+              required
+            />
+            <input
+              type="text"
               placeholder="Course Name"
               value={courseName}
               onChange={(e) => setCourseName(e.target.value)}
@@ -254,6 +261,7 @@ function AdminHome() {
           <table>
             <thead>
               <tr>
+                <th>Course ID</th>
                 <th>Course Name</th>
                 <th>Teacher</th>
                 <th>Time</th>
@@ -264,6 +272,7 @@ function AdminHome() {
             <tbody>
               {courses.map((course) => (
                 <tr key={course.id}>
+                  <td>{course.id}</td>
                   <td>{course.name}</td>
                   <td>{course.instructorName}</td>
                   <td>{course.timeslot}</td>
