@@ -1,0 +1,256 @@
+body {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(159, 203, 225);
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.outerAdminInstructorTeach {
+    width: 1000px; /* Increased width for a bigger box */
+    height: 600px; /* Increased height for a bigger box */
+    max-height: 800px;
+    background-color: lightblue;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #000;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative; /* Allows positioning within this container */
+    overflow: hidden;
+    height: 100vh; /* Full viewport height */
+}
+
+.outerAdminInstructorTeach .outerHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+
+    background-color: lightblue; /* Matches the container's background */
+    position: sticky; /* Makes it stick to the top */
+    top: 0; /* Sticks to the top of the parent container */
+    z-index: 10; /* Ensures it appears above other content */
+}
+
+.outerAdminInstructorTeach .outerHeader .left {
+    background-color: lightblue; /* Matches the container's background */
+}
+.outerAdminInstructorTeach .outerHeader .center {
+    background-color: lightblue; /* Matches the container's background */
+}
+
+.outerAdminInstructorTeach .outerHeader .left,
+.outerAdminInstructorTeach .outerHeader .center,
+.outerAdminInstructorTeach .outerHeader .right {
+    flex: 1;
+    text-align: center;
+}
+
+.outerAdminInstructorTeach .outerHeader .left {
+    text-align: left;
+}
+
+.outerAdminInstructorTeach .outerHeader .right {
+    text-align: right;
+    
+}
+
+.outerAdminInstructorTeach .addTeacherForm
+.outerAdminInstructorTeach .updateTeacherForm{
+    background-color: lightblue ;
+}
+
+.outerAdminInstructorTeach h2{
+    background-color: lightblue;
+
+}
+
+
+.outerAdminInstructorTeach button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.outerAdminInstructorTeach .lefts {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: gray;
+    color: black;
+    transition: background-color 0.3s ease;
+}
+
+.outerAdminInstructorTeach button:hover {
+    background-color: #0056b3;
+}
+.outerAdminInstructorTeach .lefts:hover {
+    background-color: gray;
+}
+
+.outerAdminInstructorTeach .navButton{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+/* Main Content Container */
+.outerAdminInstructorTeach .mainContent {
+    display: flex;
+    justify-content: space-between;
+    background-color: lightblue;
+    gap: 20px;
+    flex: 1;
+  }
+  
+  /* Left Container for Forms */
+  .outerAdminInstructorTeach .leftContainer {
+    width: 48%;
+    background-color: lightblue;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Right Container for the Table */
+  .outerAdminInstructorTeach .teachersTableContainer {
+    width: 48%;
+    background-color: lightblue;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 600px; /* Ensures aspect ratio */
+  }
+  
+  .teachersTable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .teachersTable th,
+  .teachersTable td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .teachersTable th {
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+  }
+  
+  .teachersTable td {
+    background-color: lightblue;
+  }
+  
+  /* Buttons in Table */
+  .outerAdminInstructorTeach .deleteButton {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .outerAdminInstructorTeach .deleteButton:hover {
+    background-color: #c0392b;
+  }
+  
+  .outerAdminInstructorTeach .editButton {
+    background-color: #007bff;
+    color: white;
+    margin: 10px;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+
+  .outerAdminInstructorTeach .innerHeader {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    background-color: lightblue;
+    color: black;
+    padding-bottom: 10px;
+}
+
+  .outerAdminInstructorTeach .editButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Form Styling */
+  .outerAdminInstructorTeach form {
+    display: flex;
+    background-color: lightblue;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .outerAdminInstructorTeach form input,
+  .outerAdminInstructorTeach form button {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    color: black;
+    border: 1px solid black;
+    background-color: lightblue;
+
+    border-radius: 5px;
+    font-size: 1em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .outerAdminInstructorTeach  form button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .outerAdminInstructorTeach form button:hover {
+    background-color: #0056b3;
+  }
+
+  .outerAdminInstructorTeach form input::placeholder {
+    color: black;
+
+    background-color: lightblue;
+
+}

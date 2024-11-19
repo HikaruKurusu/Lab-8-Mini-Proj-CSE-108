@@ -177,6 +177,7 @@ function AdminStudentEnroll() {
           Sign out
         </button>
       </div>
+
       <div className="Header">
         <button
           className="navButton"
@@ -203,10 +204,15 @@ function AdminStudentEnroll() {
           User Info
         </button>
       </div>
+  <div className="content">
+  <div className="leftSection">
 
       {/* Add Student Form */}
       <div className="addStudentForm">
-      <h3>Add Enrollment</h3>
+      <span
+            className="innerHeader"
+            style={{ fontSize: "1.5em", fontWeight: "bold", color: "black" }}
+          >Add Enrollment</span>
       <label>Enrollment ID:</label>
       <input
         type="text"
@@ -233,6 +239,10 @@ function AdminStudentEnroll() {
       />
       <button onClick={addStudent}>Add Enrollment</button>
     </div>
+  
+
+
+ 
       {/* Edit Enrollment Form */}
       {editingEnrollmentID && (
         <div className="editEnrollmentForm">
@@ -258,10 +268,14 @@ function AdminStudentEnroll() {
           <button onClick={updateEnrollment}>Update Enrollment</button>
           <button onClick={() => setEditingEnrollmentID(null)}>Cancel</button>
         </div>
+         
       )}
+       </div>
+
+       <div className="rightSection">
       {/* Display List of Students */}
       <div className="studentsList">
-        <h3>All Students</h3>
+  
         <table>
           <thead>
             <tr>
@@ -280,13 +294,15 @@ function AdminStudentEnroll() {
                 <td>{student.courseID}</td>
                 <td>{student.grade}</td>
                 <td>
-                  <button onClick={() => startEditing(student)}>Edit</button>
+                  <button onClick={() => startEditing(student)}className="editButton">Edit</button>
                   <button onClick={() => deleteStudent(student.enrollmentID)}>Delete</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+      </div>
       </div>
     </div>
   );

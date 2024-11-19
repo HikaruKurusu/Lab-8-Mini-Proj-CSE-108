@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 function AdminHome() {
   const [name, setName] = useState([]);
   const navigate = useNavigate();
-  const [courses, setCourses] = useState([]); 
-  const [courseName, setCourseName] = useState(""); 
-  const [instructorName, setInstructorName] = useState(""); 
-  const [maxEnrolled, setMaxEnrolled] = useState(""); 
-  const [timeslot, setTimeslot] = useState(""); 
-  const [editingCourseId, setEditingCourseId] = useState(null); 
+  const [courses, setCourses] = useState([]);
+  const [courseName, setCourseName] = useState("");
+  const [instructorName, setInstructorName] = useState("");
+  const [maxEnrolled, setMaxEnrolled] = useState("");
+  const [timeslot, setTimeslot] = useState("");
+  const [editingCourseId, setEditingCourseId] = useState(null);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -31,7 +31,7 @@ function AdminHome() {
   };
 
   useEffect(() => {
-    fetchCourses(); 
+    fetchCourses();
   }, []);
 
   const handleUpdateCourse = async (e) => {
@@ -59,8 +59,8 @@ function AdminHome() {
       const data = await response.json();
       if (response.ok) {
         alert("Course updated successfully!");
-        fetchCourses(); 
-        setEditingCourseId(null); 
+        fetchCourses();
+        setEditingCourseId(null);
         clearForm();
       } else {
         alert(`Error: ${data.error}`);
@@ -72,7 +72,7 @@ function AdminHome() {
   };
 
   const handleEditClick = (course) => {
-    setEditingCourseId(course.id); 
+    setEditingCourseId(course.id);
     setCourseName(course.name);
     setInstructorName(course.instructorName);
     setMaxEnrolled(course.maxEnrolled);
@@ -98,7 +98,7 @@ function AdminHome() {
       const data = await response.json();
       if (response.ok) {
         alert("Course deleted successfully!");
-        fetchCourses(); 
+        fetchCourses();
       } else {
         alert(`Error: ${data.error}`);
       }
@@ -109,14 +109,14 @@ function AdminHome() {
   };
   const handleCourseSubmit = async (e) => {
     e.preventDefault();
-  
+
     const newCourse = {
       name: courseName,
       instructorName: instructorName,
       maxEnrolled: maxEnrolled,
       timeslot: timeslot,
     };
-  
+
     try {
       const response = await fetch("http://127.0.0.1:5000/create_course", {
         method: "POST",
@@ -125,12 +125,12 @@ function AdminHome() {
         },
         body: JSON.stringify(newCourse),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         alert(`Course created successfully! Course ID: ${data.courseID}`);
-        fetchCourses(); 
-        clearForm(); 
+        fetchCourses();
+        clearForm();
       } else {
         alert(`Error: ${data.error}`);
       }
@@ -142,28 +142,29 @@ function AdminHome() {
   useEffect(() => {
     const fetchName = async () => {
       try {
-        const studentId = localStorage.getItem('userId');
+        const studentId = localStorage.getItem("userId");
         if (!studentId) {
-          console.error('Student ID not found');
+          console.error("Student ID not found");
           return;
         }
-        const response = await fetch(`http://127.0.0.1:5000/get_name/${studentId}`);
+        const response = await fetch(
+          `http://127.0.0.1:5000/get_name/${studentId}`
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch name');
+          throw new Error("Failed to fetch name");
         }
         const data = await response.json();
         if (data.name) {
           setName(data.name);
         } else {
-          console.error('Invalid name data format:', data);
+          console.error("Invalid name data format:", data);
         }
       } catch (error) {
-        console.error('Error fetching name:', error);
+        console.error("Error fetching name:", error);
       }
     };
-    fetchName(); 
+    fetchName();
   }, []);
-  
 
   return (
     <div className="outerAdminHome">
@@ -203,7 +204,7 @@ function AdminHome() {
         <div className="leftSection">
           <span
             className="innerHeader"
-            style={{ fontSize: "1.5em", fontWeight: "bold", color: "white" }}
+            style={{ fontSize: "1.5em", fontWeight: "bold", color: "black" }}
           >
             {editingCourseId ? "Edit Course" : "Create Course"}
           </span>
@@ -218,6 +219,7 @@ function AdminHome() {
               required
             /> */}
             <input
+              style={{ backgroundColor: "lightblue" }}
               type="text"
               placeholder="Course Name"
               value={courseName}
@@ -225,6 +227,7 @@ function AdminHome() {
               required
             />
             <input
+            style={{ backgroundColor: "lightblue" }}
               type="text"
               placeholder="Instructor Name"
               value={instructorName}
@@ -232,6 +235,7 @@ function AdminHome() {
               required
             />
             <input
+            style={{ backgroundColor: "lightblue" }}
               type="text"
               placeholder="Max Enrolled"
               value={maxEnrolled}
@@ -239,6 +243,7 @@ function AdminHome() {
               required
             />
             <input
+            style={{ backgroundColor: "lightblue" }}
               type="text"
               placeholder="Timeslot"
               value={timeslot}
@@ -278,7 +283,9 @@ function AdminHome() {
                   <td>{course.timeslot}</td>
                   <td>{course.maxEnrolled}</td>
                   <td>
-                    <button onClick={() => handleEditClick(course)}>Edit</button>
+                    <button onClick={() => handleEditClick(course)}className="editButton">
+                      Edit
+                    </button>
                     <button onClick={() => handleDeleteCourse(course.id)}>
                       Delete
                     </button>

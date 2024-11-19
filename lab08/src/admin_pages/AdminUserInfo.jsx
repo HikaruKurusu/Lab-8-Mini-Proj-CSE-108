@@ -184,44 +184,18 @@ function AdminUserInfo() {
         </button>
       </div>
 
-      <div className="userList">
-        <h2>All Users</h2>
-        <table className="userTable">
-          <thead>
-            <tr>
-              <th>UserID</th>
-              <th>Name</th>
-              <th>User Type</th>
-              <th>Password</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.userID}>
-                <td>{user.userID}</td>
-                <td>{user.name}</td>
-                <td>{user.userType}</td>
-                <td>{user.password}</td>
-                <td>
-                  <button onClick={() => setEditUser(user)} className="editButton">
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => handleDeleteUser(user.userID)} 
-                    className="deleteButton"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
 
-        <h3>{editUser ? "Edit User" : "Add New User"}</h3>
+<div className="content">
+
+
+        <div className="leftSection">
+        <span
+            className="innerHeader"
+            style={{ fontSize: "1.5em", fontWeight: "bold", color: "black" }}
+          >{editUser ? "Edit User" : "Add New User"}</span>
         <form onSubmit={editUser ? handleUpdateUser : handleAddUser}>
           <input 
+          style={{ backgroundColor: "lightblue" }}
             type="text" 
             name="userID" 
             value={editUser ? editUser.userID : newUser.userID} 
@@ -231,6 +205,7 @@ function AdminUserInfo() {
             disabled={editUser}  
           />
           <input 
+          style={{ backgroundColor: "lightblue" }}
             type="text" 
             name="name" 
             value={editUser ? editUser.name : newUser.name} 
@@ -239,6 +214,7 @@ function AdminUserInfo() {
             required 
           />
           <input 
+          style={{ backgroundColor: "lightblue" }}
             type="text" 
             name="userType" 
             value={editUser ? editUser.userType : newUser.userType} 
@@ -247,6 +223,7 @@ function AdminUserInfo() {
             required 
           />
           <input 
+          style={{ backgroundColor: "lightblue" }}
             type="password" 
             name="password" 
             value={editUser ? editUser.password : newUser.password} 
@@ -256,6 +233,48 @@ function AdminUserInfo() {
           />
           <button type="submit">{editUser ? "Update User" : "Add User"}</button>
         </form>
+        </div>
+
+        <div className="rightSection">
+
+<div className="userList">
+
+  <table className="userTable">
+    <thead>
+      <tr>
+        <th>UserID</th>
+        <th>Name</th>
+        <th>User Type</th>
+        <th>Password</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {users.map((user) => (
+        <tr key={user.userID}>
+          <td>{user.userID}</td>
+          <td>{user.name}</td>
+          <td>{user.userType}</td>
+          <td>{user.password}</td>
+          <td>
+            <button onClick={() => setEditUser(user)} className="editButton">
+              Edit
+            </button>
+            <button 
+              onClick={() => handleDeleteUser(user.userID)} 
+              className="deleteButton"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  </div>
+  </div>
+
+      
       </div>
     </div>
   );
