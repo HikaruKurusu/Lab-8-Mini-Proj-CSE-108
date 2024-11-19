@@ -5,9 +5,9 @@ import './TeacherCourseView.css';
 const TeacherCourseView = () => {
     const [name, setName] = useState([]);
     const [courseName, setCourseName] = useState('');
-    const [grades, setGrades] = useState([]); // Array to store student grades
-    const [editingIndex, setEditingIndex] = useState(null); // To track which row is being edited
-    const [newGrade, setNewGrade] = useState(''); // To store the new grade
+    const [grades, setGrades] = useState([]); 
+    const [editingIndex, setEditingIndex] = useState(null); 
+    const [newGrade, setNewGrade] = useState(''); 
     const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.clear();
@@ -16,7 +16,7 @@ const TeacherCourseView = () => {
       useEffect(() => {
         const fetchName = async () => {
           try {
-            const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+            const studentId = localStorage.getItem('userId'); 
             if (!studentId) {
               console.error('Student ID not found');
               return;
@@ -27,9 +27,8 @@ const TeacherCourseView = () => {
             }
             const data = await response.json();
     
-            // Assuming the API returns an object with a 'name' property
             if (data.name) {
-              setName(data.name); // Set the fetched name in the state
+              setName(data.name); 
             } else {
               console.error('Invalid name data format:', data);
             }
@@ -56,8 +55,8 @@ const TeacherCourseView = () => {
                 }
                 const data = await response.json();
                 if (data && Array.isArray(data)) {
-                    setGrades(data); // Store fetched grades in state
-                    setCourseName(`Course ID: ${courseId}`); // Optionally set course name for display
+                    setGrades(data); 
+                    setCourseName(`Course ID: ${courseId}`); 
                 } else {
                     console.error('Invalid data format:', data);
                 }
@@ -87,7 +86,6 @@ const TeacherCourseView = () => {
     
             const data = await response.json();
             console.log(data.message);
-            // Optionally, refresh grades list here
             setGrades(grades.map(g => 
                 g.enrollmentID === enrollmentID ? { ...g, grade: newGrade } : g
             ));

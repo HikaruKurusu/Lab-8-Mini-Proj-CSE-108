@@ -9,7 +9,7 @@ function AdminStudentEnroll() {
   const [courseID, setCourseID] = useState('');
   const [grade, setGrade] = useState('');
   const [students, setStudents] = useState([]);;
-  const [editingEnrollmentID, setEditingEnrollmentID] = useState(null);  // State for which enrollment is being edited
+  const [editingEnrollmentID, setEditingEnrollmentID] = useState(null);  
   const [editingStudentID, setEditingStudentID] = useState('');
   const [editingCourseID, setEditingCourseID] = useState('');
   const [editingGrade, setEditingGrade] = useState('');
@@ -75,7 +75,7 @@ function AdminStudentEnroll() {
 
   useEffect(() => {
     fetchStudentName();
-    fetchAllStudents(); // Fetch all students when component mounts
+    fetchAllStudents(); 
   }, []);
 
   // Add Student API Call
@@ -99,7 +99,7 @@ function AdminStudentEnroll() {
       const data = await response.json();
       if (response.ok) {
         alert("Enrollment added successfully");
-        fetchAllStudents(); // Refresh the student list after adding
+        fetchAllStudents(); 
       } else {
         alert(data.error || "Failed to add student");
       }
@@ -119,7 +119,7 @@ function AdminStudentEnroll() {
 
       if (response.ok) {
         alert('Student deleted successfully');
-        fetchAllStudents();  // Refresh the student list after deletion
+        fetchAllStudents();  
       } else {
         alert(data.error || 'Failed to delete student');
       }
@@ -149,8 +149,8 @@ function AdminStudentEnroll() {
 
       if (response.ok) {
         alert('Enrollment updated successfully');
-        fetchAllStudents();  // Refresh the student list after update
-        setEditingEnrollmentID(null);  // Close the edit form
+        fetchAllStudents();  
+        setEditingEnrollmentID(null);  
       } else {
         alert(data.error || 'Failed to update enrollment');
       }
@@ -160,7 +160,7 @@ function AdminStudentEnroll() {
     }
   };
 
-  // Trigger Edit Form
+
   const startEditing = (student) => {
     setEditingEnrollmentID(student.enrollmentID);
     setEditingStudentID(student.studentID);

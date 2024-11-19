@@ -4,7 +4,7 @@ import './addCourse.css';
 
 function AddCourse() {
   const [name, setName] = useState([]);
-  const [courses, setCourses] = useState([]); // State for storing all courses
+  const [courses, setCourses] = useState([]); 
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -15,7 +15,7 @@ function AddCourse() {
   useEffect(() => {
     const fetchName = async () => {
       try {
-        const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+        const studentId = localStorage.getItem('userId'); 
         if (!studentId) {
           console.error('Student ID not found');
           return;
@@ -26,7 +26,7 @@ function AddCourse() {
         }
         const data = await response.json();
         if (data.name) {
-          setName(data.name); // Set the fetched name in the state
+          setName(data.name); 
         } else {
           console.error('Invalid name data format:', data);
         }
@@ -38,7 +38,7 @@ function AddCourse() {
     fetchName();
   }, []);
 
-  // Fetch all available courses from the API
+
   const fetchCourses = async () => {
     try {
       const response = await fetch('http://127.0.0.1:5000/api/courses');
@@ -53,12 +53,12 @@ function AddCourse() {
   };
 
   useEffect(() => {
-    fetchCourses(); // Initial fetch of courses when the component loads
+    fetchCourses(); 
   }, []);
 
   const handleAddCourse = async (courseId) => {
     try {
-      const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+      const studentId = localStorage.getItem('userId'); 
       if (!studentId) {
         alert('Student ID not found. Please log in again.');
         return;
@@ -86,7 +86,7 @@ function AddCourse() {
 
   const handleUnenrollCourse = async (courseId) => {
     try {
-      const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+      const studentId = localStorage.getItem('userId');
       if (!studentId) {
         alert('Student ID not found. Please log in again.');
         return;
@@ -106,8 +106,7 @@ function AddCourse() {
       }
 
       alert('Successfully unenrolled from the course!');
-      // Refetch the courses after unenrollment
-      fetchCourses(); // Update courses list after unenrollment
+      fetchCourses(); 
     } catch (error) {
       console.error('Error unenrolling from course:', error);
       alert('Could not unenroll from the course. Please try again.');
@@ -169,14 +168,14 @@ function AddCourse() {
                 <td>{course.studentsEnrolled}/{course.maxEnrolled}</td>
                 <td>
                   <button
-                    onClick={() => handleAddCourse(course.id)} // Use the correct course ID
+                    onClick={() => handleAddCourse(course.id)} 
                     className="add-button"
                   >
                     Enroll
                   </button>
                 
                   <button
-                    onClick={() => handleUnenrollCourse(course.id)} // Use the correct course ID
+                    onClick={() => handleUnenrollCourse(course.id)} 
                     className="add-button"
                   >
                     Unenroll

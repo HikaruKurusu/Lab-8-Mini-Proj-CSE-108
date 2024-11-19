@@ -14,7 +14,7 @@ function AdminInstructorTeach() {
     instructionID: "",
     teacherID: "",
     courseID: ""
-  }); // State for editing a teacher
+  }); 
   const navigate = useNavigate();
 
   const handleLogout = () => {

@@ -10,15 +10,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class Courses(db.Model):
-    courseID = db.Column(db.Integer, primary_key=True)  # Primary key as an auto-incrementing ID
+    courseID = db.Column(db.Integer, primary_key=True)  
     name = db.Column(db.String(20))
     instructorName = db.Column(db.String(20))
     maxEnrolled = db.Column(db.Integer, nullable=True)
     timeslot = db.Column(db.String(20))
 class UserInfo(db.Model):
-    userID = db.Column(db.String(10), primary_key=True)  # Primary key as an auto-incrementing ID
-    name = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
-    password = db.Column(db.String(100), nullable=False)  # Password, not unique
+    userID = db.Column(db.String(10), primary_key=True)  
+    name = db.Column(db.String(100), unique=True, nullable=False)  
+    password = db.Column(db.String(100), nullable=False)  
     userType = db.Column(db.String(20), nullable=False)
 class studentEnrolledin(db.Model):
     enrollmentID = db.Column(db.Integer, primary_key=True)
@@ -62,10 +62,9 @@ def login():
     if not username or not password:
         return jsonify({"error": "Username and password are required"}), 400
 
-    # Check if user exists and password matches
+
     user = UserInfo.query.filter_by(name=username, password=password).first()
     if user:
-        # Return userType and userID in the response
         return jsonify({"message": "Login successful", "userType": user.userType, "userID": user.userID}), 200
     else:
         return jsonify({"error": "Invalid username or password"}), 401
@@ -106,32 +105,28 @@ def get_courses():
 @app.route('/get_student_courses/<string:student_id>', methods=['GET'])
 def get_student_courses(student_id):
     try:
-        # Create a subquery to count students enrolled in each course
         student_count_subquery = (
             db.session.query(
                 studentEnrolledin.courseID,
                 func.count(studentEnrolledin.studentID).label('studentsEnrolled')
             )
             .group_by(studentEnrolledin.courseID)
-            .subquery()  # Turn this query into a subquery
+            .subquery()  #
         )
 
-        # Now query the main Courses table and join with the student enrollment table
         enrolled_courses = (
             db.session.query(
                 Courses.name,
                 Courses.instructorName,
                 Courses.maxEnrolled,
                 Courses.timeslot,
-                student_count_subquery.c.studentsEnrolled  # Reference the studentsEnrolled from the subquery
+                student_count_subquery.c.studentsEnrolled  
             )
-            .join(studentEnrolledin, studentEnrolledin.courseID == Courses.courseID)  # Join studentEnrolledin for filtering
-            .join(student_count_subquery, student_count_subquery.c.courseID == Courses.courseID)  # Join the subquery for student counts
-            .filter(studentEnrolledin.studentID == student_id)  # Filter for the specific student
-            .all()
+            .join(studentEnrolledin, studentEnrolledin.courseID == Courses.courseID)  
+            .join(student_count_subquery, student_count_subquery.c.courseID == Courses.courseID)  
+            .filter(studentEnrolledin.studentID == student_id)  
         )
         
-        # Format the result into a list of dictionaries
         courses_list = [
             {
                 "name": course.name,
@@ -151,15 +146,12 @@ def get_student_courses(student_id):
 @app.route('/get_teacher_courses/<string:teacher_id>', methods=['GET'])
 def get_teacher_courses(teacher_id):
     try:
-        # Query the database for courses the student is enrolled in
         enrolled_courses = (
             db.session.query(Courses)
             .join(instructorTeaches, Courses.courseID == instructorTeaches.courseID)
             .filter(instructorTeaches.teacherID == teacher_id)
             .all()
         )
-        
-        # Format the result into a list of dictionaries
         courses_list = [
             {
                 "id": course.courseID,
@@ -188,7 +180,7 @@ def get_student_grades(course_id):
             {
                 "enrollmentID": enrollment_id,
                 "name": student_name,
-                "grade": float(grade) if grade else None  # Handle null grades
+                "grade": float(grade) if grade else None  
             }
             for student_name, grade, enrollment_id in student_grades
         ]
@@ -228,27 +220,22 @@ def enroll_student():
         return jsonify({"error": "Student ID and Course ID are required"}), 400
 
     try:
-        # Check if the student is already enrolled in the course
         existing_enrollment = studentEnrolledin.query.filter_by(studentID=student_id, courseID=course_id).first()
         if existing_enrollment:
             return jsonify({"error": "Student is already enrolled in this course"}), 400
         
-        # Get the current count of students enrolled in the course
         current_enrollment_count = db.session.query(func.count(studentEnrolledin.studentID)) \
             .filter(studentEnrolledin.courseID == course_id) \
-            .scalar()  # This returns the count as an integer
+            .scalar()  
         
-        # Get the max enrollment for the course
         course = db.session.query(Courses.maxEnrolled).filter_by(courseID=course_id).first()
         
         if not course:
             return jsonify({"error": "Course not found"}), 404
         
-        # If the current enrollment count is greater than or equal to maxEnrolled, return an error
         if current_enrollment_count >= course.maxEnrolled:
             return jsonify({"error": "Course is full, cannot enroll"}), 400
         
-        # Proceed with enrollment if there is space
         enrollment = studentEnrolledin(studentID=student_id, courseID=course_id)
         db.session.add(enrollment)
         db.session.commit()
@@ -280,13 +267,11 @@ def unenroll_student():
         return jsonify({"error": "Student ID and Course ID are required"}), 400
 
     try:
-        # Find the enrollment record
-        enrollment = studentEnrolledin.query.filter_by(studentID=student_id, courseID=course_id).first()
-        
+        enrollment = studentEnrolledin.query.filter_by(studentID=student_id, courseID=course_id).first()      
         if not enrollment:
             return jsonify({"error": "Student is not enrolled in this course"}), 404
         
-        # Remove the enrollment
+
         db.session.delete(enrollment)
         db.session.commit()
         return jsonify({"message": "Unenrollment successful"}), 200
@@ -297,18 +282,15 @@ def unenroll_student():
 def create_course():
     data = request.get_json()
 
-    # Get course details from the request data
     name = data.get('name')
     instructor_name = data.get('instructorName')
     max_enrolled = data.get('maxEnrolled')
     timeslot = data.get('timeslot')
 
-    # Validate that all fields are provided
     if not name or not instructor_name or not max_enrolled or not timeslot:
         return jsonify({"error": "All fields are required"}), 400
 
     try:
-        # Create a new course
         new_course = Courses(
             name=name,
             instructorName=instructor_name,
@@ -316,7 +298,6 @@ def create_course():
             timeslot=timeslot
         )
 
-        # Add the new course to the database
         db.session.add(new_course)
         db.session.commit()
 
@@ -326,9 +307,8 @@ def create_course():
         return jsonify({"error": str(e)}), 500
 @app.route('/delete_course/<int:course_id>', methods=['DELETE'])
 def delete_course(course_id):
-    # Logic to delete the course from the database
     try:
-        course = Courses.query.get(course_id)  # Corrected from 'Course' to 'Courses'
+        course = Courses.query.get(course_id)  
         if not course:
             return jsonify({'error': 'Course not found'}), 404
         db.session.delete(course)
@@ -339,10 +319,7 @@ def delete_course(course_id):
 @app.route('/get_teachers', methods=['GET'])
 def get_teachers():
     try:
-        # Query the UserInfo table for all users with userType = "teacher"
         teachers = db.session.query(instructorTeaches).all()
-
-        # Format the result into a list of dictionaries
         teachers_list = [
             {
                 "instructionID": teacher.instructionID,
@@ -383,13 +360,11 @@ def add_teacher():
 @app.route('/delete_teacher/<instructionID>', methods=['DELETE'])
 def delete_teacher(instructionID):
     try:
-        # Find the teacher by userID
         instructionAssignment = instructorTeaches.query.filter_by(instructionID=instructionID).first()
 
         if not instructionAssignment:
             return jsonify({"error": "Instruction assignment not found"}), 404
 
-        # Delete the teacher
         db.session.delete(instructionAssignment)
         db.session.commit()
 
@@ -411,12 +386,10 @@ def add_student():
         return jsonify({"error": "All fields are required, and userType must be 'student'"}), 400
 
     try:
-        # Check if enrollmentID already exists
         existing_user = studentEnrolledin.query.filter_by(enrollmentID=enrollmentID).first()
         if existing_user:
             return jsonify({"error": "User ID already exists"}), 400
 
-        # Create new student
         new_enrollment = studentEnrolledin(enrollmentID=enrollmentID, studentID=studentID, courseID=courseID, grade=grade)
         db.session.add(new_enrollment)
         db.session.commit()
@@ -434,19 +407,15 @@ def add_student():
 @app.route('/delete_student/<enrollmentID>', methods=['DELETE'])
 def delete_student(enrollmentID):
     try:
-        # Find the student by userID
         student = studentEnrolledin.query.filter_by(enrollmentID=enrollmentID).first()
 
         if not student:
             return jsonify({"error": "Student not found"}), 404
 
-        # Check if the student is enrolled in any courses, handle foreign key constraints if needed
-        # Example: you may want to delete any related enrollments before deleting the student
         student_enrollments = studentEnrolledin.query.filter_by(enrollmentID=enrollmentID).all()
         for enrollment in student_enrollments:
             db.session.delete(enrollment)
 
-        # Delete the student
         db.session.delete(student)
         db.session.commit()
 
@@ -457,10 +426,8 @@ def delete_student(enrollmentID):
 @app.route('/get_students', methods=['GET'])
 def get_students():
     try:
-        # Query the UserInfo table for all users with userType = "student"
         students = db.session.query(studentEnrolledin).all()
 
-        # Format the result into a list of dictionaries
         students_list = [
             {
                 "enrollmentID": student.enrollmentID,
@@ -478,15 +445,12 @@ def get_students():
 @app.route('/get_all_users', methods=['GET'])
 def get_all_users():
     try:
-        # Query the UserInfo table for all users
         users = UserInfo.query.all()
-
-        # Format the result into a list of dictionaries
         users_list = [
             {
                 "userID": user.userID,
                 "name": user.name,
-                "password": user.password,  # Include password in the response
+                "password": user.password, 
                 "userType": user.userType
             }
             for user in users
@@ -498,42 +462,36 @@ def get_all_users():
 @app.route('/add_user', methods=['POST'])
 def add_user():
     try:
-        data = request.get_json()  # Get the JSON data sent in the request
+        data = request.get_json()  
 
-        # Extract the user details
         userID = data.get('userID')
         name = data.get('name')
         userType = data.get('userType')
         password = data.get('password')
 
-        # Validate data (example validation)
+
         if not userID or not name or not userType or not password:
             return jsonify({"error": "All fields are required"}), 400
 
-        # Insert user into the database (assuming SQLite)
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-        cursor.execute('''
-            INSERT INTO user_info (userID, name, userType, password)
-            VALUES (?, ?, ?, ?)
-        ''', (userID, name, userType, password))
-        conn.commit()
-        conn.close()
-
-        return jsonify({"message": "User added successfully"}), 201
+        new_user = UserInfo(userID = userID, name = name, userType = userType, password = password)
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({
+            "userID": new_user.userID,
+            "name": new_user.name,
+            "userType": new_user.userType,
+            "password": new_user.password
+        }), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 @app.route('/delete_user/<userID>', methods=['DELETE'])
 def delete_user(userID):
     try:
-        # Find the user by userID
         user = UserInfo.query.filter_by(userID=userID).first()
 
         if not user:
             return jsonify({"error": "User not found"}), 404
-
-        # Delete the user
         db.session.delete(user)
         db.session.commit()
 
@@ -545,22 +503,18 @@ def delete_user(userID):
 @app.route('/update_course/<int:course_id>', methods=['PUT'])
 def update_course(course_id):
     try:
-        # Get the JSON data from the request
         data = request.get_json()
 
-        # Fetch the course from the database
         course = Courses.query.filter_by(courseID=course_id).first()
         
         if not course:
             return jsonify({"error": "Course not found"}), 404
 
-        # Update course fields if provided in the request
         course.name = data.get('name', course.name)
         course.instructorName = data.get('instructorName', course.instructorName)
         course.maxEnrolled = data.get('maxEnrolled', course.maxEnrolled)
         course.timeslot = data.get('timeslot', course.timeslot)
 
-        # Commit the changes to the database
         db.session.commit()
 
         return jsonify({"message": "Course updated successfully"}), 200
@@ -571,20 +525,16 @@ def update_course(course_id):
 @app.route('/update_instructor_teaches/<int:instruction_id>', methods=['PUT'])
 def update_instructor_teaches(instruction_id):
     try:
-        # Parse the JSON request data
         data = request.get_json()
 
-        # Fetch the record to be updated
         instruction = instructorTeaches.query.filter_by(instructionID=instruction_id).first()
 
         if not instruction:
             return jsonify({"error": "Record not found"}), 404
 
-        # Update the fields if provided in the request
         instruction.teacherID = data.get('teacherID', instruction.teacherID)
         instruction.courseID = data.get('courseID', instruction.courseID)
 
-        # Commit the changes to the database
         db.session.commit()
 
         return jsonify({"message": "Record updated successfully"}), 200
@@ -594,26 +544,20 @@ def update_instructor_teaches(instruction_id):
     
 @app.route('/update_enrollment/<int:enrollmentID>', methods=['PUT'])
 def update_enrollment(enrollmentID):
-    # Find the enrollment record by enrollmentID, if not found returns 404
     enrollment = studentEnrolledin.query.get_or_404(enrollmentID)
 
-    # Get the data from the request JSON
     data = request.get_json()
-
-    # Update the fields with new data, if provided
     if 'studentID' in data:
         enrollment.studentID = data['studentID']
     if 'courseID' in data:
         enrollment.courseID = data['courseID']
     if 'grade' in data:
-        # Ensure grade is a valid numeric value
         try:
             enrollment.grade = float(data['grade'])
         except ValueError:
             return jsonify({'error': 'Invalid grade value'}), 400
 
     try:
-        # Commit the changes to the database
         db.session.commit()
         return jsonify({'message': 'Enrollment updated successfully'}), 200
     except Exception as e:
@@ -622,15 +566,11 @@ def update_enrollment(enrollmentID):
         
 @app.route('/update_user/<string:userID>', methods=['PUT'])
 def update_user(userID):
-    # Find the user record by userID
     user = UserInfo.query.get_or_404(userID)
 
-    # Get the data from the request JSON
     data = request.get_json()
 
-    # Update the fields with new data, if provided
     if 'userID' in data and data['userID'] != user.userID:
-        # You may want to prevent the userID from being modified to a different value
         return jsonify({'error': 'userID cannot be changed'}), 400
     
     if 'name' in data:
@@ -641,7 +581,6 @@ def update_user(userID):
         user.userType = data['userType']
 
     try:
-        # Commit the changes to the database
         db.session.commit()
         return jsonify({'message': 'User updated successfully'}), 200
     except Exception as e:

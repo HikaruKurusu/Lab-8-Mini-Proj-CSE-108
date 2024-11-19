@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const LoginRegister = () => {
-  const navigate = useNavigate(); // For navigation after login
+  const navigate = useNavigate(); 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -25,10 +25,8 @@ const LoginRegister = () => {
         if (response.ok) {
             setMessage(data.message);
 
-            // Save userID to localStorage
             localStorage.setItem('userId', data.userID);
 
-            // Redirect based on userType
             if (data.userType === "student") {
                 navigate('/student-home');
             } else if (data.userType === "teacher") {

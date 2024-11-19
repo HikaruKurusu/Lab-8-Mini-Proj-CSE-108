@@ -11,7 +11,7 @@ function AdminUserInfo() {
     userType: '',
     password: ''
   });
-  const [editUser, setEditUser] = useState(null); // For handling user edit
+  const [editUser, setEditUser] = useState(null); 
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -52,7 +52,7 @@ function AdminUserInfo() {
       console.error('Error fetching name:', error);
     }
   };
-  // Fetch all users
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -61,7 +61,7 @@ function AdminUserInfo() {
           throw new Error('Failed to fetch users');
         }
         const data = await response.json();
-        setUsers(data);  // Store the fetched users in the state
+        setUsers(data);  
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -73,7 +73,7 @@ function AdminUserInfo() {
     fetchStudentName();
     }, []);
 
-  // Add a new user to the backend
+
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
@@ -85,8 +85,8 @@ function AdminUserInfo() {
 
       if (response.ok) {
         const addedUser = await response.json();
-        setUsers([...users, addedUser]);  // Add the new user to the state
-        setNewUser({ userID: '', name: '', userType: '', password: '' });  // Reset form
+        setUsers([...users, addedUser]);  
+        setNewUser({ userID: '', name: '', userType: '', password: '' });  
       } else {
         console.error('Failed to add user');
       }
@@ -95,7 +95,7 @@ function AdminUserInfo() {
     }
   };
 
-  // Handle input changes in the form
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewUser((prevState) => ({
@@ -104,7 +104,6 @@ function AdminUserInfo() {
     }));
   };
 
-  // Handle input changes for editing a user
   const handleEditInputChange = (e) => {
     const { name, value } = e.target;
     setEditUser((prevState) => ({
@@ -113,14 +112,13 @@ function AdminUserInfo() {
     }));
   };
 
-  // Handle deleting a user
   const handleDeleteUser = async (userID) => {
     try {
       const response = await fetch(`http://127.0.0.1:5000/delete_user/${userID}`, {
         method: 'DELETE',
       });
       if (response.ok) {
-        setUsers(users.filter((user) => user.userID !== userID));  // Remove the deleted user from the state
+        setUsers(users.filter((user) => user.userID !== userID)); 
       } else {
         console.error('Failed to delete user');
       }
@@ -129,7 +127,6 @@ function AdminUserInfo() {
     }
   };
 
-  // Handle updating a user
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
@@ -141,8 +138,8 @@ function AdminUserInfo() {
 
       if (response.ok) {
         const updatedUser = await response.json();
-        setUsers(users.map((user) => (user.userID === updatedUser.userID ? updatedUser : user)));  // Update the user in the state
-        setEditUser(null);  // Close the edit form
+        setUsers(users.map((user) => (user.userID === updatedUser.userID ? updatedUser : user)));  
+        setEditUser(null);  
       } else {
         console.error('Failed to update user');
       }
@@ -231,7 +228,7 @@ function AdminUserInfo() {
             onChange={editUser ? handleEditInputChange : handleInputChange} 
             placeholder="User ID" 
             required 
-            disabled={editUser}  // Disable ID when editing
+            disabled={editUser}  
           />
           <input 
             type="text" 

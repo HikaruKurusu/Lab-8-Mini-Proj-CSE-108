@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 function AdminHome() {
   const [name, setName] = useState([]);
   const navigate = useNavigate();
-  const [courses, setCourses] = useState([]); // State for storing courses
-  const [courseName, setCourseName] = useState(""); // State for course name
-  const [instructorName, setInstructorName] = useState(""); // State for instructor name
-  const [maxEnrolled, setMaxEnrolled] = useState(""); // State for max enrolled
-  const [timeslot, setTimeslot] = useState(""); // State for timeslot
-  const [editingCourseId, setEditingCourseId] = useState(null); // State for tracking the course being edited
+  const [courses, setCourses] = useState([]); 
+  const [courseName, setCourseName] = useState(""); 
+  const [instructorName, setInstructorName] = useState(""); 
+  const [maxEnrolled, setMaxEnrolled] = useState(""); 
+  const [timeslot, setTimeslot] = useState(""); 
+  const [editingCourseId, setEditingCourseId] = useState(null); 
 
   const handleLogout = () => {
     localStorage.clear();
@@ -31,7 +31,7 @@ function AdminHome() {
   };
 
   useEffect(() => {
-    fetchCourses(); // Initial fetch of courses when the component loads
+    fetchCourses(); 
   }, []);
 
   const handleUpdateCourse = async (e) => {
@@ -59,8 +59,8 @@ function AdminHome() {
       const data = await response.json();
       if (response.ok) {
         alert("Course updated successfully!");
-        fetchCourses(); // Refresh the course list
-        setEditingCourseId(null); // Exit edit mode
+        fetchCourses(); 
+        setEditingCourseId(null); 
         clearForm();
       } else {
         alert(`Error: ${data.error}`);
@@ -72,7 +72,7 @@ function AdminHome() {
   };
 
   const handleEditClick = (course) => {
-    setEditingCourseId(course.id); // Enter edit mode with the selected course
+    setEditingCourseId(course.id); 
     setCourseName(course.name);
     setInstructorName(course.instructorName);
     setMaxEnrolled(course.maxEnrolled);
@@ -98,7 +98,7 @@ function AdminHome() {
       const data = await response.json();
       if (response.ok) {
         alert("Course deleted successfully!");
-        fetchCourses(); // Refresh the list of courses after deletion
+        fetchCourses(); 
       } else {
         alert(`Error: ${data.error}`);
       }
@@ -129,8 +129,8 @@ function AdminHome() {
       const data = await response.json();
       if (response.ok) {
         alert(`Course created successfully! Course ID: ${data.courseID}`);
-        fetchCourses(); // Refresh the list of courses
-        clearForm(); // Reset the form fields
+        fetchCourses(); 
+        clearForm(); 
       } else {
         alert(`Error: ${data.error}`);
       }
@@ -161,7 +161,7 @@ function AdminHome() {
         console.error('Error fetching name:', error);
       }
     };
-    fetchName(); // Call the function inside useEffect
+    fetchName(); 
   }, []);
   
 
@@ -210,13 +210,13 @@ function AdminHome() {
           <form
             onSubmit={editingCourseId ? handleUpdateCourse : handleCourseSubmit}
           >
-            <input
+            {/* <input
               type="text"
               placeholder="Course ID"
               value={editingCourseId}
               onChange={(e) => setEditingCourseId(e.target.value)}
               required
-            />
+            /> */}
             <input
               type="text"
               placeholder="Course Name"

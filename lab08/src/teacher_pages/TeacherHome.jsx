@@ -4,12 +4,12 @@ import './TeacherHome.css';
 
 const TeacherHome = () => {
   const [name, setName] = useState([]);
-  const [courses, setCourses] = useState([]); // State to store courses
+  const [courses, setCourses] = useState([]); 
   const navigate = useNavigate();
   useEffect(() => {
     const fetchName = async () => {
       try {
-        const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+        const studentId = localStorage.getItem('userId'); 
         if (!studentId) {
           console.error('Student ID not found');
           return;
@@ -20,9 +20,8 @@ const TeacherHome = () => {
         }
         const data = await response.json();
 
-        // Assuming the API returns an object with a 'name' property
         if (data.name) {
-          setName(data.name); // Set the fetched name in the state
+          setName(data.name); 
         } else {
           console.error('Invalid name data format:', data);
         }
@@ -34,11 +33,10 @@ const TeacherHome = () => {
     fetchName();
   }, []);
 
-  // Fetch courses from API on component load
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const teacherId = localStorage.getItem('userId'); // Assume teacher ID is stored in localStorage
+        const teacherId = localStorage.getItem('userId'); 
         if (!teacherId) {
           console.error('Teacher ID not found');
           return;
@@ -49,9 +47,8 @@ const TeacherHome = () => {
         }
         const data = await response.json();
 
-        // Check if the data structure is correct
         if (Array.isArray(data)) {
-          setCourses(data); // Set the courses in state
+          setCourses(data); 
         } else {
           console.error('Invalid courses data format:', data);
         }
@@ -68,11 +65,6 @@ const TeacherHome = () => {
     navigate('/');
   };
 
-  const handleButtonClick = (buttonName) => {
-    if (buttonName === 'yourCourses') {
-      navigate('/teacher-home');
-    }
-  };
 
   const handleView = (courseId) => {
     localStorage.setItem('selectedCourseID', courseId);
