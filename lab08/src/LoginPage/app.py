@@ -542,8 +542,111 @@ def delete_user(userID):
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+@app.route('/update_course/<int:course_id>', methods=['PUT'])
+def update_course(course_id):
+    try:
+        # Get the JSON data from the request
+        data = request.get_json()
 
+        # Fetch the course from the database
+        course = Courses.query.filter_by(courseID=course_id).first()
+        
+        if not course:
+            return jsonify({"error": "Course not found"}), 404
 
+        # Update course fields if provided in the request
+        course.name = data.get('name', course.name)
+        course.instructorName = data.get('instructorName', course.instructorName)
+        course.maxEnrolled = data.get('maxEnrolled', course.maxEnrolled)
+        course.timeslot = data.get('timeslot', course.timeslot)
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        return jsonify({"message": "Course updated successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/update_instructor_teaches/<int:instruction_id>', methods=['PUT'])
+def update_instructor_teaches(instruction_id):
+    try:
+        # Parse the JSON request data
+        data = request.get_json()
+
+        # Fetch the record to be updated
+        instruction = instructorTeaches.query.filter_by(instructionID=instruction_id).first()
+
+        if not instruction:
+            return jsonify({"error": "Record not found"}), 404
+
+        # Update the fields if provided in the request
+        instruction.teacherID = data.get('teacherID', instruction.teacherID)
+        instruction.courseID = data.get('courseID', instruction.courseID)
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        return jsonify({"message": "Record updated successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/update_enrollment/<int:enrollmentID>', methods=['PUT'])
+def update_enrollment(enrollmentID):
+    # Find the enrollment record by enrollmentID, if not found returns 404
+    enrollment = studentEnrolledin.query.get_or_404(enrollmentID)
+
+    # Get the data from the request JSON
+    data = request.get_json()
+
+    # Update the fields with new data, if provided
+    if 'studentID' in data:
+        enrollment.studentID = data['studentID']
+    if 'courseID' in data:
+        enrollment.courseID = data['courseID']
+    if 'grade' in data:
+        # Ensure grade is a valid numeric value
+        try:
+            enrollment.grade = float(data['grade'])
+        except ValueError:
+            return jsonify({'error': 'Invalid grade value'}), 400
+
+    try:
+        # Commit the changes to the database
+        db.session.commit()
+        return jsonify({'message': 'Enrollment updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+        
+@app.route('/update_user/<string:userID>', methods=['PUT'])
+def update_user(userID):
+    # Find the user record by userID
+    user = UserInfo.query.get_or_404(userID)
+
+    # Get the data from the request JSON
+    data = request.get_json()
+
+    # Update the fields with new data, if provided
+    if 'userID' in data and data['userID'] != user.userID:
+        # You may want to prevent the userID from being modified to a different value
+        return jsonify({'error': 'userID cannot be changed'}), 400
+    
+    if 'name' in data:
+        user.name = data['name']
+    if 'password' in data:
+        user.password = data['password']
+    if 'userType' in data:
+        user.userType = data['userType']
+
+    try:
+        # Commit the changes to the database
+        db.session.commit()
+        return jsonify({'message': 'User updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
