@@ -67,7 +67,7 @@ function StudentHome() {
         </button>
       </div>
       <div className="innerTeacherHome">
-        <h2 className="innerHeader">Your Courses</h2>
+        <span className="innerHeader"style={{ fontSize: '1.5em', fontWeight: 'bold' }}>Your Courses</span>
         <table className="courses">
           <thead>
             <tr>
