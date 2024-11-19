@@ -1,0 +1,275 @@
+/* Center everything on the page */
+body {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(159, 203, 225);
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.outerAdminHome {
+    width: 1000px; /* Increased width for a bigger box */
+    height: 600px; /* Increased height for a bigger box */
+    max-height: 800px;
+    background-color: lightblue;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #000;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative; /* Allows positioning within this container */
+}
+
+.outerAdminHome .outerHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+
+    background-color: lightblue; /* Matches the container's background */
+    position: sticky; /* Makes it stick to the top */
+    top: 0; /* Sticks to the top of the parent container */
+    z-index: 10; /* Ensures it appears above other content */
+}
+.outerAdminHome .outerHeader .left {
+    background-color: lightblue; /* Matches the container's background */
+}
+.outerAdminHome .outerHeader .center {
+    background-color: lightblue; /* Matches the container's background */
+}
+
+
+.outerAdminHome .outerHeader .left,
+.outerAdminHome .outerHeader .center,
+.outerAdminHome .outerHeader .right {
+    flex: 1;
+    text-align: center;
+}
+
+.outerAdminHome .outerHeader .left {
+    text-align: left;
+}
+
+.outerAdminHome .outerHeader .right {
+    text-align: right;
+}
+
+.outerAdminHome button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+.outerAdminHome .lefts {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: lightblue;
+    color: black;
+    transition: background-color 0.3s ease;
+}
+
+.outerAdminHome button:hover {
+    background-color: #0056b3;
+}
+.outerAdminHome .lefts:hover {
+    background-color: gray;
+}
+
+.outerAdminHome .innerTeacherHome {
+    width: 100%;
+    background-color: darkblue;
+    color: black;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.outerAdminHome .innerHeader {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    background-color: lightblue;
+    color: black;
+    padding-bottom: 10px;
+}
+
+.leftSection form {
+    display: flex;
+    flex-direction: column;
+    color: black;
+    background-color: lightblue;
+
+    align-items: center;
+    margin-top: 20px;
+    
+}
+
+.innerTeacherHome form input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    color: black;
+    border: 1px solid #ccc;
+    background-color: lightblue;
+
+    border-radius: 5px;
+    font-size: 1em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.leftSection form input::placeholder {
+    color: black;
+
+    background-color: lightblue;
+
+}
+
+.innerTeacherHome form button {
+    width: 80%;
+    padding: 10px;
+    font-size: 1.2em;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+}
+
+.innerTeacherHome form button:hover {
+    background-color: #0056b3;
+}
+
+.outerAdminHome .content {
+    display: flex;
+    background-color: lightblue;
+    color: black;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.content .leftSection,
+.content .rightSection {
+    width: 48%; /* Each section takes up half the container with a small gap */
+    display: flex;
+    flex-direction: column;
+    background-color: lightblue;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    margin: 10px;
+    padding: 20px;
+}
+
+.content .rightSection {
+    overflow-y: auto; /* Allows scrolling if content overflows */
+    max-height: 400px; /* Adjust this to maintain aspect ratio */
+}
+
+.content .rightSection table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.content .rightSection th,
+.content .rightSection td {
+    border: 1px solid black;
+    padding: 10px;
+    
+    text-align: left;
+}
+
+.content .rightSection th {
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+}
+
+.content .rightSection td {
+    background-color: lightblue;
+    border: 1px solid black;
+}
+
+.content .rightSection button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.content .rightSection button:hover {
+    background-color: #c0392b;
+}
+
+
+
+.outerAdminHome .courses {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: lightblue;
+    margin-top: 10px;
+}
+
+.outerAdminHome .courses th,
+.outerAdminHome .courses td {
+    border: 1px solid #000000;
+    padding: 10px;
+    background-color: lightblue;
+    text-align: left;
+}
+
+.outerAdminHome .courses th {
+    background-color: lightblue;
+    text-align: center;
+}
+
+.outerAdminHome .navButton{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.outerAdminHome .editButton {
+    background-color: #007bff !important;
+    color: white;
+    border: none;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }

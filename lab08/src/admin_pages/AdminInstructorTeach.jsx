@@ -164,74 +164,84 @@ function AdminInstructorTeach() {
   };
 
   return (
-    <div className="outerAdminHome">
+    <div className="outerAdminInstructorTeach">
       <div className="outerHeader">
         <span className="left">Welcome {name}</span>
         <span className="center">ACME University</span>
         <button className="right" onClick={handleLogout}>Sign out</button>
       </div>
+  
       <div className="Header">
         <button className="navButton" onClick={() => handleButtonClick("admincourses")}>Courses</button>
         <button className="navButton" onClick={() => handleButtonClick("admininstructorteaches")}>Instructor</button>
         <button className="navButton" onClick={() => handleButtonClick("adminstudentenrolledin")}>Student</button>
         <button className="navButton" onClick={() => handleButtonClick("adminuserinfo")}>User Info</button>
       </div>
+  
+      <div className="mainContent">
+        {/* Left Container */}
+        <div className="leftContainer">
+          {/* Add Teacher Form */}
+          <div className="addTeacherForm">
+            <span className="innerHeader"
+            style={{ fontSize: "1.5em", fontWeight: "bold", color: "black" }}>Add New Instructor Assignment</span>
+            <form onSubmit={handleAddTeacher}>
+              <input type="text" name="instructionID" value={newTeacher.instructionID} onChange={handleInputChange} placeholder="instructionID" required />
+              <input type="text" name="teacherID" value={newTeacher.teacherID} onChange={handleInputChange} placeholder="teacherID" required />
+              <input type="text" name="courseID" value={newTeacher.courseID} onChange={handleInputChange} placeholder="courseID" required />
+              <button type="submit">Add Teacher</button>
+            </form>
+          </div>
+  
+          {/* Update Teacher Form */}
+          <div className="updateTeacherForm">
+            <span className="innerHeader"
+            style={{ fontSize: "1.5em", fontWeight: "bold", color: "black" }}>Update Instructor Assignment</span>
+            <form onSubmit={handleUpdateTeacher}>
+              <input type="text" name="instructionID" value={editTeacher.instructionID} onChange={handleEditInputChange} placeholder="instructionID" required />
+              <input type="text" name="teacherID" value={editTeacher.teacherID} onChange={handleEditInputChange} placeholder="teacherID" required />
+              <input type="text" name="courseID" value={editTeacher.courseID} onChange={handleEditInputChange} placeholder="courseID" required />
+              <button type="submit">Update Teacher</button>
+            </form>
+          </div>
+        </div>
+  
+        {/* Right Container */}
+        <div className="teachersTableContainer">
 
-      {/* Add Teacher Form */}
-      <div className="addTeacherForm">
-        <h2>Add New Instructor Assignment</h2>
-        <form onSubmit={handleAddTeacher}>
-          <input type="text" name="instructionID" value={newTeacher.instructionID} onChange={handleInputChange} placeholder="instructionID" required />
-          <input type="text" name="teacherID" value={newTeacher.teacherID} onChange={handleInputChange} placeholder="teacherID" required />
-          <input type="text" name="courseID" value={newTeacher.courseID} onChange={handleInputChange} placeholder="courseID" required />
-          <button type="submit">Add Teacher</button>
-        </form>
-      </div>
-
-      {/* Update Teacher Form */}
-      <div className="updateTeacherForm">
-        <h2>Update Instructor Assignment</h2>
-        <form onSubmit={handleUpdateTeacher}>
-          <input type="text" name="instructionID" value={editTeacher.instructionID} onChange={handleEditInputChange} placeholder="instructionID" required />
-          <input type="text" name="teacherID" value={editTeacher.teacherID} onChange={handleEditInputChange} placeholder="teacherID" required />
-          <input type="text" name="courseID" value={editTeacher.courseID} onChange={handleEditInputChange} placeholder="courseID" required />
-          <button type="submit">Update Teacher</button>
-        </form>
-      </div>
-
-      {/* Teachers Table */}
-      <div className="teachersTableContainer">
-        <h2>Instructor Assignments</h2>
-        <table className="teachersTable">
-          <thead>
-            <tr>
-              <th>instructionID</th>
-              <th>teacherID</th>
-              <th>courseID</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {teachers.map((teacher) => (
-              <tr key={teacher.instructionID}>
-                <td>{teacher.instructionID}</td>
-                <td>{teacher.teacherID}</td>
-                <td>{teacher.courseID}</td>
-                <td>
-                  <button onClick={() => handleDeleteTeacher(teacher.instructionID)} className="deleteButton">
-                    Delete
-                  </button>
-                  <button onClick={() => setEditTeacher({ ...teacher })} className="editButton">
-                    Edit
-                  </button>
-                </td>
+          <table className="teachersTable">
+            <thead>
+              <tr>
+                <th>instructionID</th>
+                <th>teacherID</th>
+                <th>courseID</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {teachers.map((teacher) => (
+                <tr key={teacher.instructionID}>
+                  <td>{teacher.instructionID}</td>
+                  <td>{teacher.teacherID}</td>
+                  <td>{teacher.courseID}</td>
+                  <td>
+                  <button onClick={() => setEditTeacher({ ...teacher })} className="editButton">
+                      Edit
+                    </button>
+                    <button onClick={() => handleDeleteTeacher(teacher.instructionID)} className="deleteButton">
+                      Delete
+                    </button>
+                    
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
+  
 }
 
 export default AdminInstructorTeach;
