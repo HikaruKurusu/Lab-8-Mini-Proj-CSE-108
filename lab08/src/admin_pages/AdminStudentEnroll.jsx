@@ -193,14 +193,30 @@ function AdminStudentEnroll() {
       {/* Display List of Students */}
       <div className="studentsList">
         <h3>All Students</h3>
-        <ul>
-          {students.map((student) => (
-            <li key={student.userID}>
-              {student.name} (ID: {student.userID})
-              <button onClick={() => deleteStudent(student.userID)}>Delete</button>
-            </li>
-          ))}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>Enrollment ID</th>
+              <th>Student Name</th>
+              <th>Course ID</th>
+              <th>Grade</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((student) => (
+              <tr key={student.enrollmentID}>
+                <td>{student.enrollmentID}</td>
+                <td>{student.studentID}</td>
+                <td>{student.courseID}</td>
+                <td>{student.grade}</td>
+                <td>
+                  <button onClick={() => deleteStudent(student.enrollmentID)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

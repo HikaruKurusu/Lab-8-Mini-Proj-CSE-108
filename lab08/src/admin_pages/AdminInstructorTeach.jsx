@@ -5,7 +5,11 @@ import { useNavigate } from "react-router-dom";
 function AdminInstructorTeach() {
   const [name, setName] = useState([]);
   const [teachers, setTeachers] = useState([]); // State for storing teachers
-  const [newTeacher, setNewTeacher] = useState({ name: "", userID: "", password: "", userType: "teacher" }); // State for new teacher
+  const [newTeacher, setNewTeacher] = useState({
+    instructionID: "",
+    teacherID: "",
+    courseID: ""
+  }); // State for new teacher
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -67,52 +71,55 @@ function AdminInstructorTeach() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewTeacher(prevState => ({ ...prevState, [name]: value }));
+    setNewTeacher((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
   };
+  
 
   const handleAddTeacher = async (e) => {
     e.preventDefault();
-
-    // Check if all fields are filled
-    if (!newTeacher.name || !newTeacher.userID || !newTeacher.password) {
+  
+    // Validate fields
+    if (!newTeacher.instructionID || !newTeacher.teacherID || !newTeacher.courseID) {
       alert("Please fill in all fields");
       return;
     }
-
+  
     try {
-      const response = await fetch('http://127.0.0.1:5000/add_teacher', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:5000/add_teacher", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(newTeacher),
+        body: JSON.stringify(newTeacher)
       });
-
+  
       if (response.ok) {
-        alert("Teacher added successfully!");
-        // After adding the teacher, update the teacher list
+        alert("Teacher assignment added successfully!");
         const addedTeacher = await response.json();
-        setTeachers(prevTeachers => [...prevTeachers, addedTeacher]);
-        setNewTeacher({ name: "", userID: "", password: "", userType: "teacher" }); // Reset form fields
+        setTeachers((prevTeachers) => [...prevTeachers, addedTeacher]);
+        setNewTeacher({ instructionID: "", teacherID: "", courseID: "" });
       } else {
-        throw new Error('Failed to add teacher');
+        throw new Error("Failed to add teacher assignment");
       }
     } catch (error) {
-      console.error('Error adding teacher:', error);
-      alert("Error adding teacher");
+      console.error("Error adding teacher assignment:", error);
+      alert("Error adding teacher assignment");
     }
   };
 
-  const handleDeleteTeacher = async (userID) => {
+  const handleDeleteTeacher = async (instructionID) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/delete_teacher/${userID}`, {
+      const response = await fetch(`http://127.0.0.1:5000/delete_teacher/${instructionID}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
         alert("Teacher deleted successfully!");
         // Remove the deleted teacher from the list
-        setTeachers(prevTeachers => prevTeachers.filter(teacher => teacher.userID !== userID));
+        setTeachers(prevTeachers => prevTeachers.filter(teacher => teacher.instructionID !== instructionID));
       } else {
         throw new Error('Failed to delete teacher');
       }
@@ -148,20 +155,20 @@ function AdminInstructorTeach() {
       
       {/* Add Teacher Form */}
       <div className="addTeacherForm">
-        <h2>Add New Teacher</h2>
+        <h2>Add New Instructor Assignment</h2>
         <form onSubmit={handleAddTeacher}>
           <input
             type="text"
             name="instructionID"
-            value={newTeacher.name}
+            value={newTeacher.instructionID}
             onChange={handleInputChange}
             placeholder="instructionID"
             required
           />
           <input
             type="text"
-            name="userID"
-            value={newTeacher.userID}
+            name="teacherID"
+            value={newTeacher.teacherID}
             onChange={handleInputChange}
             placeholder="teacherID"
             required
@@ -169,7 +176,7 @@ function AdminInstructorTeach() {
           <input
             type="text"
             name="courseID"
-            value={newTeacher.password}
+            value={newTeacher.courseID}
             onChange={handleInputChange}
             placeholder="courseID"
             required
@@ -180,24 +187,24 @@ function AdminInstructorTeach() {
 
       {/* Teachers Table */}
       <div className="teachersTableContainer">
-        <h2>Teachers List</h2>
+        <h2>Instructor Assignments</h2>
         <table className="teachersTable">
           <thead>
             <tr>
-              <th>UserID</th>
-              <th>Name</th>
-              <th>User Type</th>
+              <th>instructionID</th>
+              <th>teacherID</th>
+              <th>courseID</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {teachers.map((teacher) => (
-              <tr key={teacher.userID}>
-                <td>{teacher.userID}</td>
-                <td>{teacher.name}</td>
-                <td>{teacher.userType}</td>
+              <tr key={teacher.instructionID}>
+                <td>{teacher.instructionID}</td>
+                <td>{teacher.teacherID}</td>
+                <td>{teacher.courseID}</td>
                 <td>
-                  <button onClick={() => handleDeleteTeacher(teacher.userID)} className="deleteButton">
+                  <button onClick={() => handleDeleteTeacher(teacher.instructionID)} className="deleteButton">
                     Delete
                   </button>
                 </td>

@@ -318,14 +318,14 @@ def delete_course(course_id):
 def get_teachers():
     try:
         # Query the UserInfo table for all users with userType = "teacher"
-        teachers = UserInfo.query.filter_by(userType="teacher").all()
+        teachers = db.session.query(instructorTeaches).all()
 
         # Format the result into a list of dictionaries
         teachers_list = [
             {
-                "userID": teacher.userID,
-                "name": teacher.name,
-                "userType": teacher.userType
+                "instructionID": teacher.instructionID,
+                "teacherID": teacher.teacherID,
+                "courseID": teacher.courseID
             }
             for teacher in teachers
         ]
@@ -336,45 +336,39 @@ def get_teachers():
 @app.route('/add_teacher', methods=['POST'])
 def add_teacher():
     data = request.get_json()
+    instructionID = data.get('instructionID')
+    teacherID = data.get('teacherID')
+    courseID = data.get('courseID')
 
-    name = data.get('name')
-    userID = data.get('userID')
-    password = data.get('password')
-    userType = data.get('userType')
-
-    if not name or not userID or not password or not userType:
+    if not instructionID or not teacherID or not courseID:
         return jsonify({"error": "All fields are required"}), 400
-
+    
     try:
-        # Check if userID already exists
-        existing_user = UserInfo.query.filter_by(userID=userID).first()
-        if existing_user:
-            return jsonify({"error": "User ID already exists"}), 400
-
-        # Create new teacher
-        new_teacher = UserInfo(name=name, userID=userID, password=password, userType=userType)
-        db.session.add(new_teacher)
+        existing_assignment = instructorTeaches.query.filter_by(instructionID=instructionID).first()
+        if existing_assignment:
+            return jsonify({"error": "instruction ID already exsits"}), 400
+        new_instruction = instructorTeaches(instructionID = instructionID, teacherID = teacherID, courseID = courseID)
+        db.session.add(new_instruction)
         db.session.commit()
-
         return jsonify({
-            "userID": new_teacher.userID,
-            "name": new_teacher.name,
-            "userType": new_teacher.userType
+            "instructionID": new_instruction.instructionID,
+            "teacherID": new_instruction.teacherID,
+            "courseID": new_instruction.courseID
         }), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
-@app.route('/delete_teacher/<userID>', methods=['DELETE'])
-def delete_teacher(userID):
+@app.route('/delete_teacher/<instructionID>', methods=['DELETE'])
+def delete_teacher(instructionID):
     try:
         # Find the teacher by userID
-        teacher = UserInfo.query.filter_by(userID=userID).first()
+        instructionAssignment = instructorTeaches.query.filter_by(instructionID=instructionID).first()
 
-        if not teacher:
-            return jsonify({"error": "Teacher not found"}), 404
+        if not instructionAssignment:
+            return jsonify({"error": "Instruction assignment not found"}), 404
 
         # Delete the teacher
-        db.session.delete(teacher)
+        db.session.delete(instructionAssignment)
         db.session.commit()
 
         return jsonify({"message": "Teacher deleted successfully"}), 200
@@ -441,14 +435,15 @@ def delete_student(userID):
 def get_students():
     try:
         # Query the UserInfo table for all users with userType = "student"
-        students = UserInfo.query.filter_by(userType="student").all()
+        students = db.session.query(studentEnrolledin).all()
 
         # Format the result into a list of dictionaries
         students_list = [
             {
-                "userID": student.userID,
-                "name": student.name,
-                "userType": student.userType
+                "enrollmentID": student.enrollmentID,
+                "studentID": student.studentID,
+                "courseID": student.courseID,
+                "grade": student.grade
             }
             for student in students
         ]
