@@ -197,7 +197,18 @@ def enroll_student():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+    
 
+@app.route('/get_name/<string:student_id>', methods=['GET'])
+def get_name(student_id):
+    try:
+        student = UserInfo.query.filter_by(userID=student_id).first()
+        if student:
+            return jsonify({"name": student.name}), 200
+        else:
+            return jsonify({"error": "Student not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 

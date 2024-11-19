@@ -3,13 +3,40 @@ import { useNavigate } from 'react-router-dom';
 import './addCourse.css';
 
 function AddCourse() {
-  const [name, setName] = useState('Student');
+  const [name, setName] = useState([]);
   const [courses, setCourses] = useState([]); // State for storing all courses
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
   };
+  useEffect(() => {
+    const fetchName = async () => {
+      try {
+        const studentId = localStorage.getItem('userId'); // Assume student ID is stored in localStorage
+        if (!studentId) {
+          console.error('Student ID not found');
+          return;
+        }
+        const response = await fetch(`http://127.0.0.1:5000/get_name/${studentId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch name');
+        }
+        const data = await response.json();
+
+        // Assuming the API returns an object with a 'name' property
+        if (data.name) {
+          setName(data.name); // Set the fetched name in the state
+        } else {
+          console.error('Invalid name data format:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching name:', error);
+      }
+    };
+
+    fetchName();
+  }, []);
 
   // Fetch all available courses from the API
   useEffect(() => {
