@@ -437,6 +437,93 @@ def delete_student(userID):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+@app.route('/get_students', methods=['GET'])
+def get_students():
+    try:
+        # Query the UserInfo table for all users with userType = "student"
+        students = UserInfo.query.filter_by(userType="student").all()
+
+        # Format the result into a list of dictionaries
+        students_list = [
+            {
+                "userID": student.userID,
+                "name": student.name,
+                "userType": student.userType
+            }
+            for student in students
+        ]
+
+        return jsonify(students_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/get_all_users', methods=['GET'])
+def get_all_users():
+    try:
+        # Query the UserInfo table for all users
+        users = UserInfo.query.all()
+
+        # Format the result into a list of dictionaries
+        users_list = [
+            {
+                "userID": user.userID,
+                "name": user.name,
+                "password": user.password,  # Include password in the response
+                "userType": user.userType
+            }
+            for user in users
+        ]
+
+        return jsonify(users_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    try:
+        data = request.get_json()  # Get the JSON data sent in the request
+
+        # Extract the user details
+        userID = data.get('userID')
+        name = data.get('name')
+        userType = data.get('userType')
+        password = data.get('password')
+
+        # Validate data (example validation)
+        if not userID or not name or not userType or not password:
+            return jsonify({"error": "All fields are required"}), 400
+
+        # Insert user into the database (assuming SQLite)
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO user_info (userID, name, userType, password)
+            VALUES (?, ?, ?, ?)
+        ''', (userID, name, userType, password))
+        conn.commit()
+        conn.close()
+
+        return jsonify({"message": "User added successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/delete_user/<userID>', methods=['DELETE'])
+def delete_user(userID):
+    try:
+        # Find the user by userID
+        user = UserInfo.query.filter_by(userID=userID).first()
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Delete the user
+        db.session.delete(user)
+        db.session.commit()
+
+        return jsonify({"message": "User deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
 
 
 
