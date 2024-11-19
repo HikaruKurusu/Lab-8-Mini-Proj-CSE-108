@@ -147,8 +147,6 @@ def get_student_courses(student_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-
     
 @app.route('/get_teacher_courses/<string:teacher_id>', methods=['GET'])
 def get_teacher_courses(teacher_id):
@@ -208,9 +206,27 @@ def enroll_student():
         return jsonify({"error": "Student ID and Course ID are required"}), 400
 
     try:
+        # Check if the student is already enrolled in the course
         existing_enrollment = studentEnrolledin.query.filter_by(studentID=student_id, courseID=course_id).first()
         if existing_enrollment:
             return jsonify({"error": "Student is already enrolled in this course"}), 400
+        
+        # Get the current count of students enrolled in the course
+        current_enrollment_count = db.session.query(func.count(studentEnrolledin.studentID)) \
+            .filter(studentEnrolledin.courseID == course_id) \
+            .scalar()  # This returns the count as an integer
+        
+        # Get the max enrollment for the course
+        course = db.session.query(Courses.maxEnrolled).filter_by(courseID=course_id).first()
+        
+        if not course:
+            return jsonify({"error": "Course not found"}), 404
+        
+        # If the current enrollment count is greater than or equal to maxEnrolled, return an error
+        if current_enrollment_count >= course.maxEnrolled:
+            return jsonify({"error": "Course is full, cannot enroll"}), 400
+        
+        # Proceed with enrollment if there is space
         enrollment = studentEnrolledin(studentID=student_id, courseID=course_id)
         db.session.add(enrollment)
         db.session.commit()
@@ -218,6 +234,7 @@ def enroll_student():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
     
 
 @app.route('/get_name/<string:student_id>', methods=['GET'])
