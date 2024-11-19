@@ -4,17 +4,17 @@ import { useNavigate } from "react-router-dom";
 
 function AdminStudentEnroll() {
   const [name, setName] = useState([]);
+  const [enrollmentID, setEnrollmentID] = useState('');
   const [studentID, setStudentID] = useState('');
-  const [studentName, setStudentName] = useState('');
-  const [studentPassword, setStudentPassword] = useState('');
-  const [userType, setUserType] = useState('student');
-  const [students, setStudents] = useState([]);  // State to store list of students
+  const [courseID, setCourseID] = useState('');
+  const [grade, setGrade] = useState('');
+  const [students, setStudents] = useState([]);;
   const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
   };
+
 
   const handleButtonClick = (buttonName) => {
     if (buttonName === "admincourses") {
@@ -77,38 +77,38 @@ function AdminStudentEnroll() {
   // Add Student API Call
   const addStudent = async () => {
     const studentData = {
-      name: studentName,
-      userID: studentID,
-      password: studentPassword,
-      userType: userType
+      enrollmentID: enrollmentID,
+      studentID: studentID,
+      courseID: courseID,
+      grade: grade,
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/add_student', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:5000/add_student", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(studentData),
       });
-      const data = await response.json();
 
+      const data = await response.json();
       if (response.ok) {
-        alert('Student added successfully');
-        fetchAllStudents();  // Refresh the student list after adding
+        alert("Enrollment added successfully");
+        fetchAllStudents(); // Refresh the student list after adding
       } else {
-        alert(data.error || 'Failed to add student');
+        alert(data.error || "Failed to add student");
       }
     } catch (error) {
-      console.error('Error adding student:', error);
-      alert('Error adding student');
+      console.error("Error adding student:", error);
+      alert("Error adding student");
     }
   };
 
   // Delete Student API Call
-  const deleteStudent = async (userID) => {
+  const deleteStudent = async (enrollmentID) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/delete_student/${userID}`, {
+      const response = await fetch(`http://127.0.0.1:5000/delete_student/${enrollmentID}`, {
         method: 'DELETE',
       });
       const data = await response.json();
@@ -163,32 +163,33 @@ function AdminStudentEnroll() {
 
       {/* Add Student Form */}
       <div className="addStudentForm">
-        <h3>Add Student</h3>
-        <label>Student ID:</label>
-        <input
-          type="text"
-          value={studentID}
-          onChange={(e) => setStudentID(e.target.value)}
-        />
-        <label>Name:</label>
-        <input
-          type="text"
-          value={studentName}
-          onChange={(e) => setStudentName(e.target.value)}
-        />
-        <label>Password:</label>
-        <input
-          type="password"
-          value={studentPassword}
-          onChange={(e) => setStudentPassword(e.target.value)}
-        />
-        <label>User Type:</label>
-        <select value={userType} onChange={(e) => setUserType(e.target.value)}>
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-        </select>
-        <button onClick={addStudent}>Add Student</button>
-      </div>
+      <h3>Add Enrollment</h3>
+      <label>Enrollment ID:</label>
+      <input
+        type="text"
+        value={enrollmentID}
+        onChange={(e) => setEnrollmentID(e.target.value)}
+      />
+      <label>Student ID:</label>
+      <input
+        type="text"
+        value={studentID}
+        onChange={(e) => setStudentID(e.target.value)}
+      />
+      <label>Course ID:</label>
+      <input
+        type="text"
+        value={courseID}
+        onChange={(e) => setCourseID(e.target.value)}
+      />
+      <label>Grade:</label>
+      <input
+        type="text"
+        value={grade}
+        onChange={(e) => setGrade(e.target.value)}
+      />
+      <button onClick={addStudent}>Add Enrollment</button>
+    </div>
 
       {/* Display List of Students */}
       <div className="studentsList">
