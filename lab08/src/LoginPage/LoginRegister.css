@@ -11,13 +11,13 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px; /* Add space between form elements */
+    gap: 20px; 
 }
 
 .form-group {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between label and input */
+    gap: 10px;
 }
 
 .signInButton {
